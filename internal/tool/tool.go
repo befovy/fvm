@@ -119,11 +119,8 @@ func versionsDir() string {
   if len(flutterPath) != 0 {
     return flutterPath
   }
-  cache, err := os.UserCacheDir()
-  if err != nil {
-    log.Errorf("Cannot get cache dir: %v", err)
-  }
-  return path.Join(cache, "fvm", "versions")
+
+  return path.Join(constants.FvmHome(), "versions")
 }
 
 func FlutterSdkRemove(version string) {
