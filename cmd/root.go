@@ -2,11 +2,10 @@ package cmd
 
 import (
   "fmt"
+  "github.com/befovy/fvm/internal/log"
   "github.com/spf13/cobra"
   "os"
   "os/signal"
-
-  "github.com/befovy/fvm/internal/log"
 )
 
 //var colors bool
@@ -19,6 +18,7 @@ func init() {
 
 func initFvm() {
   log.Colorize()
+
   c := make(chan os.Signal, 1)
   signal.Notify(c, os.Interrupt, os.Kill)
   go func() {

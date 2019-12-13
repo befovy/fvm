@@ -5,13 +5,12 @@ import (
   "github.com/befovy/fvm/internal/constants"
   "github.com/befovy/fvm/internal/fileutil"
   "github.com/befovy/fvm/internal/log"
-  "gopkg.in/ini.v1"
+  "github.com/spf13/viper"
   "os"
   "strings"
 )
 
 const configFlutterStoredKey = "cache_path";
-
 
 func confirmConfigFile() {
   if !fileutil.IsDirectory(constants.FvmHome()) {
@@ -35,25 +34,26 @@ func confirmConfigFile() {
   }
 }
 
-func readConfig() *ini.File {
+func readConfig() {
   confirmConfigFile()
-  ctx, err := ini.Load(constants.ConfigFile())
+  viper.SetConfigFile(constants.ConfigFile())
+
+  err := viper.ReadInConfig()
   if err != nil {
     log.Errorf("Cannot load fvm config file: %v", err)
     os.Exit(1)
   }
-  return ctx
 }
 
 func GetValue(key string) string {
-  ctx := readConfig()
-  return ctx.Section("").Key(key).String()
+  readConfig()
+  return viper.GetString(key)
 }
 
 func SetValue(key, value string) {
-  ctx := readConfig()
-  ctx.Section("").Key(key).SetValue(value)
-  err := ctx.SaveTo(constants.ConfigFile())
+  readConfig()
+  viper.Set(key, value)
+  err := viper.WriteConfig()
   if err != nil {
     log.Errorf("Cannot save fvm config file: %v", err)
     os.Exit(1)
@@ -96,12 +96,14 @@ func GetFlutterStoragePath() string {
 }
 
 func AllConfig() string {
-  ctx := readConfig()
-  sec := ctx.Section("")
-
+  readConfig()
   ssb := new(strings.Builder)
-  for _, k := range sec.Keys() {
-    ssb.WriteString(fmt.Sprintf("%s:%s\n", k.Name(), k.String()))
+  ssb.WriteString("\n")
+  for _, k := range viper.AllKeys() {
+    v := viper.Get(k)
+    if vs, ok := v.(string); ok {
+      ssb.WriteString(fmt.Sprintf("%-12s : %s\n", k, vs))
+    }
   }
   return ssb.String()
 }

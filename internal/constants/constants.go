@@ -40,5 +40,5 @@ func FvmHome() string {
 }
 
 func ConfigFile() string {
-  return path.Join(FvmHome(), "config.ini")
+  return path.Join(FvmHome(), "config.yaml")
 }
