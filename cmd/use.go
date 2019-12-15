@@ -2,13 +2,15 @@ package cmd
 
 import (
   "errors"
-  "github.com/befovy/fvm/internal/log"
-  "github.com/befovy/fvm/internal/tool"
+  "github.com/befovy/fvm/fvmgo"
   "github.com/logrusorgru/aurora"
   "github.com/spf13/cobra"
 )
 
+var local bool
+
 func init() {
+  useCommand.Flags().BoolVar(&local, "local", false, "use SDK locally")
   rootCmd.AddCommand(useCommand)
 }
 
@@ -27,15 +29,19 @@ var useCommand = &cobra.Command{
   Run: func(cmd *cobra.Command, args []string) {
 
     version := args[0]
-    isValidInstall := tool.IsValidFlutterInstall(version)
+    isValidInstall := fvmgo.IsValidFlutterInstall(version)
     if !isValidInstall {
-      ins := log.Au().Colorize("fvm install <version>", aurora.YellowFg)
-      log.Errorf("Flutter %s is not installed. Please run %v", version, ins)
+      ins := fvmgo.Au().Colorize("fvm install <version>", aurora.YellowFg)
+      fvmgo.Errorf("Flutter %s is not installed. Please run %v", version, ins)
     } else {
-      log.Infof("Activating")
-      tool.LinkProjectFlutterDir(version)
-      log.Infof("%s is active", version)
-      log.Infof("Activating finished")
+      fvmgo.Infof("Activating")
+      if local {
+        fvmgo.LinkProjectFlutter(version)
+      } else {
+        fvmgo.LinkGlobalFlutter(version)
+      }
+      fvmgo.Infof("%s is active", version)
+      fvmgo.Infof("Activating finished")
     }
   },
 }

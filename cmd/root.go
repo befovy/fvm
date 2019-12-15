@@ -2,7 +2,7 @@ package cmd
 
 import (
   "fmt"
-  "github.com/befovy/fvm/internal/log"
+  "github.com/befovy/fvm/fvmgo"
   "github.com/spf13/cobra"
   "os"
   "os/signal"
@@ -17,7 +17,7 @@ func init() {
 }
 
 func initFvm() {
-  log.Colorize()
+  fvmgo.Colorize()
 
   c := make(chan os.Signal, 1)
   signal.Notify(c, os.Interrupt, os.Kill)
@@ -33,13 +33,14 @@ var rootCmd = &cobra.Command{
   Use:   "fvm",
   Short: "Flutter Version Management",
   Long:  "Flutter Version Management: A cli to manage Flutter SDK versions.",
+  Version: "v0.2.0",
 }
 
 // Execute executes the rootCmd
 func Execute() {
   cobra.OnInitialize(initFvm)
   if err := rootCmd.Execute(); err != nil {
-    log.Errorf("Command failed: %v", err)
+    fvmgo.Errorf("Command failed: %v", err)
     os.Exit(1)
   }
 }

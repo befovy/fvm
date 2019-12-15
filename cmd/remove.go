@@ -2,8 +2,7 @@ package cmd
 
 import (
   "errors"
-  "github.com/befovy/fvm/internal/log"
-  "github.com/befovy/fvm/internal/tool"
+  "github.com/befovy/fvm/fvmgo"
   "github.com/spf13/cobra"
 )
 
@@ -26,13 +25,13 @@ var removeCommand = &cobra.Command{
   Run: func(cmd *cobra.Command, args []string) {
 
     version := args[0]
-    isValidInstall := tool.IsValidFlutterInstall(version)
+    isValidInstall := fvmgo.IsValidFlutterInstall(version)
     if !isValidInstall {
-      log.Warnf("Flutter SDK: %s is not installed", version)
+      fvmgo.Warnf("Flutter SDK: %s is not installed", version)
     } else {
-      log.Infof("Removing %s", version)
-      tool.FlutterSdkRemove(version)
-      log.Infof("Removing %s finished", version)
+      fvmgo.Infof("Removing %s", version)
+      fvmgo.FlutterSdkRemove(version)
+      fvmgo.Infof("Removing %s finished", version)
     }
   },
 }

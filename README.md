@@ -2,14 +2,11 @@
 
 Flutter Version Management: A simple cli to manage Flutter SDK versions.
 
-**Go port of [leoafarias/fvm](https://github.com/leoafarias/fvm)**
-
 **Features:**
 
-* Configure Flutter SDK version per project
+* Configure Flutter SDK version per project or globally
 * Ability to install and cache multiple Flutter SDK Versions
 * Easily switch between Flutter channels & versions
-* Per project Flutter SDK upgrade
 
 ## Version Management
 
@@ -39,14 +36,20 @@ FVM gives you the ability to install many Flutter **releases** or **channels**.
 > fvm install <version>
 ```
 
-Version - use `master` to install the Master channel and `v1.8.0` to install the release.
+Use `master` to install the Master channel and `v1.8.0` to install the release.
 
 ### Use a SDK Version
 
-You can use different Flutter SDK versions per project. To do that you have to go into the root of the project and:
+You can use the installed Flutter SDK versions for your computer user account globally. To do that just:
 
 ```bash
 > fvm use <version>
+```
+
+Also, you can use different Flutter SDK versions per project. To do that you have to go into the root of the project and:
+
+```bash
+> fvm use <version> --locol
 ```
 
 ### Remove a SDK Version
@@ -73,17 +76,15 @@ There are some configurations that allows for added flexibility on FVM.
 fvm config --cache-path <path-to-use>
 ```
 
-### List Config Options
-
-Returns list of all stored options in the config file.
-
-```bash
-fvm config --ls
-```
-
 ### Running Flutter SDK
 
-There are a couple of ways you can interact with the SDK setup in your project. 
+#### Call Global SDK 
+
+After add fvm global path to your system environment variable, `flutter` command is usable every where.
+
+Your will get tip when you run `fvm use <version>` firstlly.
+
+
 
 #### Proxy Commands
 
@@ -95,31 +96,28 @@ Flutter command within `fvm` proxies all calls to the CLI just changing the SDK 
 
 This will run `flutter run` command using the local project SDK. If no FVM config is found in the project. FMV will recursively try for a version in a parent directory.
 
+If FVM config is still not found, this will run `flutter run` command using the global Flutter SDK. 
+
+
+
 #### Call Local SDK Directly
 
-FVM creates a symbolic link within your project called **fvm** which links to the installed version of the SDK.
+FVM creates a symbolic link within your project called **.fvmbin/flutter** which links to the installed version of the SDK.
 
+
+Add `$(pwd)/fvmbin` to your PATH, or
 ```bash
-> ./fvm run
+> ./fvmbin/flutter run
 ```
 
 This will run `flutter run` command using the local project SDK.
 
 As an example calling `fvm flutter run` is the equivalent of calling `flutter run` using the local project SDK.
 
-### Configure Your IDE
 
-#### VSCode
-
-Add the following to your settings.json
-
-```json
-
-"dart.flutterSdkPaths": [
-    "fvm"
-]
-```
 
 ## License
 
 This project is licensed under the Apache License 2.0 License - see the [LICENSE](LICENSE) file for details
+
+

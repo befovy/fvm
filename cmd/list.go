@@ -3,8 +3,7 @@ package cmd
 import (
   "errors"
   "fmt"
-  "github.com/befovy/fvm/internal/log"
-  "github.com/befovy/fvm/internal/tool"
+  "github.com/befovy/fvm/fvmgo"
   "github.com/spf13/cobra"
 )
 
@@ -22,15 +21,15 @@ var listCommand = &cobra.Command{
     return nil
   },
   Run: func(cmd *cobra.Command, args []string) {
-    choices := tool.FlutterListInstalledSdks()
+    choices := fvmgo.FlutterListInstalledSdks()
     if len(choices) == 0 {
-      log.Warnf("No SDKs have been installed yet.")
+      fvmgo.Warnf("No Flutter SDKs have been installed yet.")
     } else {
       for _, c := range choices {
-        if tool.IsCurrentVersion(c) {
-        c = fmt.Sprintf("%s (current)", c)
+        if fvmgo.IsCurrentVersion(c) {
+          c = fmt.Sprintf("%s (current)", c)
         }
-        log.Infof(c)
+        fvmgo.Infof(c)
       }
     }
   },

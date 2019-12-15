@@ -2,7 +2,7 @@ package cmd
 
 import (
   "errors"
-  "github.com/befovy/fvm/internal/tool"
+  "github.com/befovy/fvm/fvmgo"
   "github.com/spf13/cobra"
 )
 
@@ -23,13 +23,13 @@ var installCommand = &cobra.Command{
     return nil
   },
   Run: func(cmd *cobra.Command, args []string) {
-    tool.CheckIfGitExists()
+    fvmgo.CheckIfGitExists()
     version := args[0]
-    isChannel := tool.IsValidFlutterChannel(version)
+    isChannel := fvmgo.IsValidFlutterChannel(version)
     if isChannel {
-      tool.FlutterChannelClone(version)
+      fvmgo.FlutterChannelClone(version)
     } else {
-      tool.FlutterVersionClone(version)
+      fvmgo.FlutterVersionClone(version)
     }
   },
 }
