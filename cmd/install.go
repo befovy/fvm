@@ -25,8 +25,7 @@ var installCommand = &cobra.Command{
   Run: func(cmd *cobra.Command, args []string) {
     fvmgo.CheckIfGitExists()
     version := args[0]
-    isChannel := fvmgo.IsValidFlutterChannel(version)
-    if isChannel {
+    if fvmgo.IsValidFlutterChannel(version) {
       fvmgo.FlutterChannelClone(version)
     } else {
       fvmgo.FlutterVersionClone(version)

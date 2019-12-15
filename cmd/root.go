@@ -8,16 +8,17 @@ import (
   "os/signal"
 )
 
-//var colors bool
-var verbose bool
+var gVerbose bool
 
 func init() {
-  // rootCmd.PersistentFlags().BoolVar(&colors, "colors", true, "Add Colors to log")
-  rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Print verbose output")
+  rootCmd.PersistentFlags().BoolVarP(&gVerbose, "verbose", "v", false, "Print verbose output")
 }
 
 func initFvm() {
-  fvmgo.Colorize()
+  fvmgo.LogColorize()
+  if gVerbose {
+    fvmgo.LogVerbose()
+  }
 
   c := make(chan os.Signal, 1)
   signal.Notify(c, os.Interrupt, os.Kill)
@@ -30,10 +31,10 @@ func initFvm() {
 }
 
 var rootCmd = &cobra.Command{
-  Use:   "fvm",
-  Short: "Flutter Version Management",
-  Long:  "Flutter Version Management: A cli to manage Flutter SDK versions.",
-  Version: "0.2.0",
+  Use:     "fvm",
+  Short:   "Flutter Version Management",
+  Long:    "Flutter Version Management: A cli to manage Flutter SDK versions.",
+  Version: "0.2.1",
 }
 
 // Execute executes the rootCmd

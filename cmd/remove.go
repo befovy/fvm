@@ -11,8 +11,8 @@ func init() {
 }
 
 var removeCommand = &cobra.Command{
-  Use: "remove <version>",
-  Short:"Removes Flutter SDK Version",
+  Use:   "remove <version>",
+  Short: "Removes Flutter SDK Version",
   Args: func(cmd *cobra.Command, args []string) error {
     if len(args) == 0 {
       return errors.New("need to provide a channel or a version")

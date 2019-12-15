@@ -59,6 +59,7 @@ func IsValidFlutterChannel(channel string) bool {
   return stringSliceContains(channels, channel)
 }
 
+/// Returns true if it's a valid Flutter channel
 func IsValidFlutterVersion(version string) bool {
   versions := FlutterListAllSdks()
   return stringSliceContains(versions, version)
@@ -125,17 +126,20 @@ func checkInstalledCorrectly(version string) bool {
 
 func FlutterChannelClone(channel string) {
   if !IsValidFlutterChannel(channel) {
-    Errorf("%s is not a invalid channel", channel)
+    Errorf("%s is not a valid flutter channel", channel)
     os.Exit(1)
   }
 
+  Verbosef("%s is a valid flutter channel", channel)
   if checkInstalledCorrectly(channel) {
+    Warnf("Flutter channel %s is already installed", channel)
     return
   }
   channelDir := path.Join(VersionsDir(), channel)
+  Verbosef("Installing Flutter sdk %s to cache directory %s", channel, channelDir)
   err := os.MkdirAll(channelDir, 0755)
   if err != nil {
-    Errorf("Cannot creat directory for channel %s: %v", channel, err)
+    Errorf("Cannot create directory for channel %s: %v", channel, err)
     os.Exit(1)
   }
   ProcessRunner("git", channelDir, "clone", "-b", channel, FlutterRepo, ".")
@@ -146,12 +150,15 @@ func FlutterVersionClone(version string) {
     Errorf("%s is not a valid version", version)
     os.Exit(1)
   }
-
+  Verbosef("%s is a valid flutter version", version)
   if checkInstalledCorrectly(version) {
+    Warnf("Flutter version %s is already installed", version)
     return
   }
 
   versionDir := path.Join(VersionsDir(), version)
+  Verbosef("Installing Flutter sdk %s to cache directory %s", version, versionDir)
+
   err := os.MkdirAll(versionDir, 0755)
   if err != nil {
     Errorf("Cannot creat directory for version %s: %v", version, err)
@@ -194,12 +201,12 @@ func flutterSdkVersion(branch string) string {
   return gitGetVersion(branchDir)
 }
 
+// CheckIfGitExists checks if git command is available
 func CheckIfGitExists() {
-
   runner := exec.Command("git", "--version")
   err := runner.Run()
   if err != nil {
-    Errorf("You need Git Installed to run fvm. Go to https://git-scm.com/downloads")
+    Errorf("You need git installed to run fvm. Go to https://git-scm.com/downloads")
     os.Exit(1)
   }
 }

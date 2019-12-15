@@ -19,7 +19,7 @@ func initFvmHome(home string) {
       os.Exit(1)
     }
   } else if IsDirectory(home) && !IsFileExists(magicFile) {
-    Errorf("Invalid fvm home, magic file \".fvmhome\" not exist")
+    Errorf("Invalid fvm home %s, magic file \".fvmhome\" not exist", home)
     os.Exit(1)
   } else if IsFileExists(home) || IsSymlink(home) {
     Errorf("Invalid fvm home, %s is not a directory", home)
@@ -92,6 +92,8 @@ func SetConfigValue(key, value string) {
 */
 
 
+/// create dir if not exist.
+/// Exit(1) if path dir exists but not a directory
 func createDir(dir, name string) {
   if IsNotFound(dir) {
     err := os.MkdirAll(dir, 0755)
@@ -105,26 +107,34 @@ func createDir(dir, name string) {
   }
 }
 
-
-
+/// return fvm home path
+/// check fvm home is valid
+/// or create new fvm home directory
 func FvmHome() string {
   initFvmEnv()
   return viper.GetString("FVM_HOME")
 }
 
-
+/// return versions dir
+/// if not exits, dir will be created
+/// else this call exit(1)
 func VersionsDir() string {
   dir := path.Join(FvmHome(), "versions")
   createDir(dir, "versions")
   return dir
 }
 
+/// return temp dir
+/// if not exits, dir will be created
+/// else this call exit(1)
 func TempDir() string {
   dir := path.Join(FvmHome(), "temp")
   createDir(dir, "temp")
   return dir
 }
 
+/// return current working dir
+/// this call exit(1) if failed
 func WorkingDir() string {
   workingDirectory, err := os.Getwd()
   if err != nil {

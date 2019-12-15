@@ -7,19 +7,24 @@ import (
 )
 
 // Colorize chnage the logger to support colors printing.
-func Colorize() {
-  au = aurora.NewAurora(true)
+func LogColorize() {
+  logAu = aurora.NewAurora(true)
+}
+
+func LogVerbose() {
+  logVerbose = true
 }
 
 // internal colorized
-var au aurora.Aurora
+var logAu aurora.Aurora
+var logVerbose bool
 
 // Au Aurora instance used for colors
 func Au() aurora.Aurora {
-  if au == nil {
-    au = aurora.NewAurora(false)
+  if logAu == nil {
+    logAu = aurora.NewAurora(false)
   }
-  return au
+  return logAu
 }
 
 // Printf print a message with formatting
@@ -44,6 +49,14 @@ func Warnf(part string, parts ...interface{}) {
 func Infof(part string, parts ...interface{}) {
   hoverPrint()
   fmt.Println(Au().Colorize(fmt.Sprintf(fmt.Sprintf("%v", part), parts...), aurora.GreenFg).String())
+}
+
+// Verbosef print a verbose level information with formatting (cyan)
+func Verbosef(part string, parts ...interface{}) {
+  if logVerbose {
+    hoverPrint()
+    fmt.Println(Au().Colorize(fmt.Sprintf(fmt.Sprintf("%v", part), parts...), aurora.CyanFg).String())
+  }
 }
 
 func hoverPrint() {
