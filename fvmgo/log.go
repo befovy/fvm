@@ -55,7 +55,7 @@ func Infof(part string, parts ...interface{}) {
 func Verbosef(part string, parts ...interface{}) {
   if logVerbose {
     hoverPrint()
-    fmt.Println(Au().Colorize(fmt.Sprintf(fmt.Sprintf("%v", part), parts...), aurora.CyanFg).String())
+    fmt.Println(Au().Colorize(fmt.Sprintf(fmt.Sprintf("%v", part), parts...), aurora.WhiteFg).String())
   }
 }
 

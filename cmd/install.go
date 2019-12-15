@@ -28,6 +28,7 @@ var installCommand = &cobra.Command{
     if fvmgo.IsValidFlutterChannel(version) {
       fvmgo.FlutterChannelClone(version)
     } else {
+      fvmgo.Verbosef("%s is not a valid Flutter channel, presume it's a Flutter version", version)
       fvmgo.FlutterVersionClone(version)
     }
   },

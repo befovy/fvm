@@ -143,6 +143,7 @@ func FlutterChannelClone(channel string) {
     os.Exit(1)
   }
   ProcessRunner("git", channelDir, "clone", "-b", channel, FlutterRepo, ".")
+  Infof("Successfully installed flutter channel %s", channel)
 }
 
 func FlutterVersionClone(version string) {
@@ -165,6 +166,7 @@ func FlutterVersionClone(version string) {
     os.Exit(1)
   }
   ProcessRunner("git", versionDir, "clone", "-b", version, FlutterRepo, ".")
+  Infof("Successfully installed flutter channel %s", version)
 }
 
 func gitGetVersion(p string) string {
@@ -204,6 +206,7 @@ func flutterSdkVersion(branch string) string {
 // CheckIfGitExists checks if git command is available
 func CheckIfGitExists() {
   runner := exec.Command("git", "--version")
+  Verbosef("Running `git --version` to check if git is available")
   err := runner.Run()
   if err != nil {
     Errorf("You need git installed to run fvm. Go to https://git-scm.com/downloads")
