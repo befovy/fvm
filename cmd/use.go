@@ -3,7 +3,6 @@ package cmd
 import (
   "errors"
   "github.com/befovy/fvm/fvmgo"
-  "github.com/logrusorgru/aurora"
   "github.com/spf13/cobra"
 )
 
@@ -31,7 +30,7 @@ var useCommand = &cobra.Command{
     version := args[0]
     isValidInstall := fvmgo.IsValidFlutterInstall(version)
     if !isValidInstall {
-      ins := fvmgo.Au().Colorize("fvm install <version>", aurora.YellowFg)
+      ins := fvmgo.YellowV("fvm install <version>")
       fvmgo.Errorf("Flutter %s is not installed. Please run %v", version, ins)
     } else {
       fvmgo.Infof("Activating")
