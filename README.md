@@ -68,21 +68,13 @@ List all the versions that are installed on your machine.
 > fvm list
 ```
 
-### Change FVM Cache Directory
-
-There are some configurations that allows for added flexibility on FVM.
-
-```bash
-fvm config --cache-path <path-to-use>
-```
-
 ### Running Flutter SDK
 
 #### Call Global SDK 
 
 After add fvm global path to your system environment variable, `flutter` command is usable every where.
 
-Your will get tip when you run `fvm use <version>` firstlly.
+Your will get tip when you run `fvm use <version>` firstly.
 
 
 
