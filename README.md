@@ -16,7 +16,7 @@ Also, it allows you to grab versions by a specific release, i.e. 1.2.0. In case 
 
 ## Usage
 
-To Install:
+To Install fvm:
 
 ```bash
 > go get -u -v github.com/befovy/fvm
@@ -27,6 +27,14 @@ And then, for information on each command:
 ```bash
 > fvm help
 ```
+
+### FVM_HOME
+
+fvm use environment variable `FVM_HOME` as a working path.
+The installed cache and config file are all stored in this path.
+
+If no `FVM_HOME` in environment variable, fvm will use the default value returned by `os.UserConfigDir()` append `fvm`.
+On Mac OS, default FVM_HOME is $HOME/Library/Application\ Support/fvm
 
 ### Install a SDK Version
 
