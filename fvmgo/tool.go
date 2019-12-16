@@ -2,6 +2,7 @@ package fvmgo
 
 import (
   "bytes"
+  "github.com/spf13/viper"
   "io"
   "io/ioutil"
   "os"
@@ -61,8 +62,14 @@ func IsValidFlutterChannel(channel string) bool {
 
 /// Returns true if it's a valid Flutter channel
 func IsValidFlutterVersion(version string) bool {
-  versions := FlutterListAllSdks()
-  return stringSliceContains(versions, version)
+  initFvmEnv()
+  versions := viper.GetStringSlice("FLUTTER_REMOTE_TAGS")
+  if stringSliceContains(versions, version) {
+    return true
+  } else {
+    versions = FlutterListAllSdks()
+    return stringSliceContains(versions, version)
+  }
 }
 
 func IsValidFlutterInstall(version string) bool {
@@ -237,9 +244,16 @@ func FlutterListAllSdks() []string {
     } else {
       version := strings.Split(tag, "refs/tags/")
       if len(version) > 1 {
-        tags = append(tags, version[1])
+        Verbosef("list remote tag: %s", strings.TrimSpace(version[1]))
+        tags = append(tags, strings.TrimSpace(version[1]))
       }
     }
+  }
+
+  viper.Set("FLUTTER_REMOTE_TAGS", tags)
+  err = viper.WriteConfig()
+  if err != nil {
+    Errorf("Can't write remote tags to config cache: %v", err)
   }
   return tags
 }
