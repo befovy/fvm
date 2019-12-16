@@ -259,11 +259,13 @@ func FlutterListAllSdks() []string {
 }
 
 func FlutterListInstalledSdks() []string {
-  if IsNotFound(VersionsDir()) || !IsDirectory(VersionsDir()) {
+  dir := VersionsDir()
+  if IsNotFound(dir) || !IsDirectory(dir) {
+    Verbosef("version directory %s is not found or is not a directory", dir)
     return []string{}
   }
 
-  fis, err := ioutil.ReadDir(VersionsDir())
+  fis, err := ioutil.ReadDir(dir)
   if err != nil {
     Errorf("Cannot list installed versions: %v", err)
     os.Exit(1)
