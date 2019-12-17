@@ -22,6 +22,9 @@ To Install fvm:
 > go get -u -v github.com/befovy/fvm
 ```
 
+The command above will install binary executable fvm file to `$GOPATH/bin`.  
+Add `$GOPATH/bin` to your system PATH, or move the binary fvm file to an existing PATH directory.
+
 And then, for information on each command:
 
 ```bash
