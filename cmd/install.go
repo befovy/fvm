@@ -24,17 +24,22 @@ var installCommand = &cobra.Command{
     return nil
   },
   Run: func(cmd *cobra.Command, args []string) {
-    fvmgo.CheckIfGitExists()
-    version := args[0]
-    if fvmgo.IsValidFlutterChannel(version) {
-      fvmgo.FlutterChannelClone(version)
-    } else if !strings.HasPrefix(version, "v") {
-      fvmgo.Errorf("It seems that you want install a Flutter channel but have a invalid channel")
-      channels := fvmgo.YellowV(strings.Join(fvmgo.FlutterChannels(), " "))
-      fvmgo.Errorf("Please use one of %v", channels)
-    } else {
-      fvmgo.Verbosef("%s is not a valid Flutter channel, presume it's a Flutter version", version)
-      fvmgo.FlutterVersionClone(version)
+    err := fvmgo.CheckIfGitExists()
+    if err == nil {
+      version := args[0]
+      if fvmgo.IsValidFlutterChannel(version) {
+        err = fvmgo.FlutterChannelClone(version)
+      } else if !strings.HasPrefix(version, "v") {
+        fvmgo.Errorf("It seems that you want install a Flutter channel but have a invalid channel")
+        channels := fvmgo.YellowV(strings.Join(fvmgo.FlutterChannels(), " "))
+        fvmgo.Errorf("Please use one of %v", channels)
+      } else {
+        fvmgo.Verbosef("%s is not a valid Flutter channel, presume it's a Flutter version", version)
+        err = fvmgo.FlutterVersionClone(version)
+      }
+    }
+    if err != nil {
+      fvmgo.Errorf(err.Error())
     }
   },
 }

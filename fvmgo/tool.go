@@ -2,6 +2,8 @@ package fvmgo
 
 import (
   "bytes"
+  "errors"
+  "fmt"
   "github.com/spf13/viper"
   "io"
   "io/ioutil"
@@ -31,13 +33,12 @@ func stringSliceContains(slice []string, target string) bool {
   return contains
 }
 
-func ProcessRunner(cmd string, dir string, arg ...string) {
+func ProcessRunner(cmd string, dir string, arg ...string) error {
   runner := exec.Command(cmd, arg...)
   if len(dir) == 0 {
     cwd, err := os.Getwd()
     if err != nil {
-      Errorf("Cannot get work directory: %v", err)
-      os.Exit(1)
+      return errors.New(fmt.Sprintf("Cannot get work directory: %v", err))
     }
     runner.Dir = cwd
   } else {
@@ -49,9 +50,9 @@ func ProcessRunner(cmd string, dir string, arg ...string) {
 
   err := runner.Run()
   if err != nil {
-    Errorf("Command '%s' exited with error: %v", cmd, err)
-    os.Exit(runner.ProcessState.ExitCode())
+    return errors.New(fmt.Sprintf("Command '%s' exited with error: %v", cmd, err))
   }
+  return nil
 }
 
 /// Returns true if it's a valid Flutter channel
@@ -131,37 +132,38 @@ func checkInstalledCorrectly(version string) bool {
   return true
 }
 
-func FlutterChannelClone(channel string) {
+func FlutterChannelClone(channel string) error {
   if !IsValidFlutterChannel(channel) {
-    Errorf("%s is not a valid flutter channel", channel)
-    os.Exit(1)
+    return errors.New(fmt.Sprintf("%s is not a valid flutter channel", channel))
   }
 
   Verbosef("%s is a valid flutter channel", channel)
   if checkInstalledCorrectly(channel) {
     Warnf("Flutter channel %s is already installed", channel)
-    return
+    return nil
   }
   channelDir := path.Join(VersionsDir(), channel)
   Verbosef("Installing Flutter sdk %s to cache directory %s", channel, channelDir)
   err := os.MkdirAll(channelDir, 0755)
   if err != nil {
-    Errorf("Cannot create directory for channel %s: %v", channel, err)
-    os.Exit(1)
+    return errors.New(fmt.Sprintf("Cannot create directory for channel %s: %v", channel, err))
   }
-  ProcessRunner("git", channelDir, "clone", "-b", channel, FlutterRepo, ".")
+  err = ProcessRunner("git", channelDir, "clone", "-b", channel, FlutterRepo, ".")
+  if err != nil {
+    return err
+  }
   Infof("Successfully installed flutter channel %s", channel)
+  return nil
 }
 
-func FlutterVersionClone(version string) {
+func FlutterVersionClone(version string) error {
   if !IsValidFlutterVersion(version) {
-    Errorf("%s is not a valid version", version)
-    os.Exit(1)
+    return errors.New(fmt.Sprintf("%s is not a valid version", version))
   }
   Verbosef("%s is a valid flutter version", version)
   if checkInstalledCorrectly(version) {
     Warnf("Flutter version %s is already installed", version)
-    return
+    return nil
   }
 
   versionDir := path.Join(VersionsDir(), version)
@@ -169,11 +171,14 @@ func FlutterVersionClone(version string) {
 
   err := os.MkdirAll(versionDir, 0755)
   if err != nil {
-    Errorf("Cannot creat directory for version %s: %v", version, err)
-    os.Exit(1)
+    return errors.New(fmt.Sprintf("Cannot creat directory for version %s: %v", version, err))
   }
-  ProcessRunner("git", versionDir, "clone", "-b", version, FlutterRepo, ".")
+  err = ProcessRunner("git", versionDir, "clone", "-b", version, FlutterRepo, ".")
+  if err != nil {
+    return err
+  }
   Infof("Successfully installed flutter channel %s", version)
+  return nil
 }
 
 func gitGetVersion(p string) string {
@@ -211,14 +216,14 @@ func flutterSdkVersion(branch string) string {
 }
 
 // CheckIfGitExists checks if git command is available
-func CheckIfGitExists() {
+func CheckIfGitExists() error {
   runner := exec.Command("git", "--version")
   Verbosef("Running `git --version` to check if git is available")
   err := runner.Run()
   if err != nil {
-    Errorf("You need git installed to run fvm. Go to https://git-scm.com/downloads")
-    os.Exit(1)
+    return errors.New("You need git installed to run fvm. Go to https://git-scm.com/downloads")
   }
+  return nil
 }
 
 func FlutterListAllSdks() []string {
@@ -268,17 +273,17 @@ func FlutterListInstalledSdks() []string {
   fis, err := ioutil.ReadDir(dir)
   if err != nil {
     Errorf("Cannot list installed versions: %v", err)
-    os.Exit(1)
-  }
-
-  versions := make([]string, 0, len(fis))
-  for _, fi := range fis {
-    v := fi.Name()
-    if checkInstalledCorrectly(v) {
-      versions = append(versions, fi.Name())
+    return []string{}
+  } else {
+    versions := make([]string, 0, len(fis))
+    for _, fi := range fis {
+      v := fi.Name()
+      if checkInstalledCorrectly(v) {
+        versions = append(versions, fi.Name())
+      }
     }
+    return versions
   }
-  return versions
 }
 
 func projectFlutterLink(dir string, depth int) string {
