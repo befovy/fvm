@@ -347,11 +347,11 @@ func LinkGlobalFlutter(version string) {
   }
 
   if !stringSliceContains(paths, linkPath) {
-    Infof("add %s to path to enable flutter use", linkPath)
     if runtime.GOOS == "darwin" || runtime.GOOS == "linux" {
-      Infof("export PATH=\"%s:$PATH\"", linkPath)
+      cmd := YellowV("    export PATH=\"%s:$PATH\"", linkPath)
+      Infof("Add %s to path to make sure you can use flutter from terminal\n%v", linkPath, cmd)
     } else {
-      Infof("Add %s to PATH", linkPath)
+      Warnf("Add %s to path to make sure you can use flutter from terminal", linkPath)
     }
   }
 }

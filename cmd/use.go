@@ -33,14 +33,12 @@ var useCommand = &cobra.Command{
       ins := fvmgo.YellowV("fvm install <version>")
       fvmgo.Errorf("Flutter %s is not installed. Please run %v", version, ins)
     } else {
-      fvmgo.Infof("Activating")
       if local {
         fvmgo.LinkProjectFlutter(version)
       } else {
         fvmgo.LinkGlobalFlutter(version)
       }
       fvmgo.Infof("%s is active", version)
-      fvmgo.Infof("Activating finished")
     }
   },
 }

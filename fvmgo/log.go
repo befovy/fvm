@@ -27,8 +27,8 @@ func au() aurora.Aurora {
   return logAu
 }
 
-func YellowV(part string, parts ...interface{})  interface{}{
-  return au().Colorize(fmt.Sprintf("%v", part), aurora.YellowFg)
+func YellowV(part string, parts ...interface{}) interface{} {
+  return au().Colorize(fmt.Sprintf(fmt.Sprintf("%v", part), parts...), aurora.YellowFg)
 }
 
 // Printf print a message with formatting

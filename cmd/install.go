@@ -4,6 +4,7 @@ import (
   "errors"
   "github.com/befovy/fvm/fvmgo"
   "github.com/spf13/cobra"
+  "strings"
 )
 
 func init() {
@@ -27,6 +28,10 @@ var installCommand = &cobra.Command{
     version := args[0]
     if fvmgo.IsValidFlutterChannel(version) {
       fvmgo.FlutterChannelClone(version)
+    } else if !strings.HasPrefix(version, "v") {
+      fvmgo.Errorf("It seems that you want install a Flutter channel but have a invalid channel")
+      channels := fvmgo.YellowV(strings.Join(fvmgo.FlutterChannels(), " "))
+      fvmgo.Errorf("Please use one of %v", channels)
     } else {
       fvmgo.Verbosef("%s is not a valid Flutter channel, presume it's a Flutter version", version)
       fvmgo.FlutterVersionClone(version)

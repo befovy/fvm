@@ -34,7 +34,7 @@ var rootCmd = &cobra.Command{
   Use:     "fvm",
   Short:   "Flutter Version Management",
   Long:    "Flutter Version Management: A cli to manage Flutter SDK versions.",
-  Version: "0.2.2",
+  Version: "0.2.3",
 }
 
 // Execute executes the rootCmd
