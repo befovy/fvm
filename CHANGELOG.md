@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.4](https://github.com/befovy/fvm/compare/v0.2.2...v0.2.4) (2019-12-18)
+
+
+* more output log about install and use ([5be6910](https://github.com/befovy/fvm/commit/5be6910c5b491cab8d225a6a820df7fb5f2b7b2c))
+
 ### [0.2.2](https://github.com/befovy/fvm/compare/v0.2.0...v0.2.2) (2019-12-16)
 
 
