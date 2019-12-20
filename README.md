@@ -63,6 +63,14 @@ Also, you can use different Flutter SDK versions per project. To do that you hav
 > fvm use <version> --locol
 ```
 
+### Show current SDK info
+
+Get current active Flutter sdk version, link path and actually path
+
+```bash
+> fvm current
+```
+
 ### Remove a SDK Version
 
 Using the remove command will uninstall the SDK version locally. This will impact any projects that depend on that version of the SDK.

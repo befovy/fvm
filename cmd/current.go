@@ -17,18 +17,20 @@ package cmd
 
 import (
   "errors"
-  "fmt"
   "github.com/befovy/fvm/fvmgo"
+  "os"
+
   "github.com/spf13/cobra"
 )
 
 func init() {
-  rootCmd.AddCommand(listCommand)
+  rootCmd.AddCommand(currentCmd)
 }
 
-var listCommand = &cobra.Command{
-  Use:   "list",
-  Short: "Lists installed Flutter SDK Version",
+// currentCmd represents the current command
+var currentCmd = &cobra.Command{
+  Use:   "current",
+  Short: "Show current Flutter SDK info",
   Args: func(cmd *cobra.Command, args []string) error {
     if len(args) != 0 {
       return errors.New("dose not take argument")
@@ -36,15 +38,26 @@ var listCommand = &cobra.Command{
     return nil
   },
   Run: func(cmd *cobra.Command, args []string) {
-    choices := fvmgo.FlutterListInstalledSdks()
-    if len(choices) == 0 {
-      fvmgo.Warnf("No Flutter SDKs have been installed yet.")
+    current, err := fvmgo.CurrentVersion()
+    if err != nil {
+      fvmgo.Errorf(err.Error())
+    } else if len(current) == 0 {
+      ins := fvmgo.YellowV("fvm use <version>")
+      fvmgo.Warnf("No active Flutter sdk, please run %v", ins)
     } else {
-      for _, c := range choices {
-        if fvmgo.IsCurrentVersion(c) {
-          c = fmt.Sprintf("%s (current)", c)
-        }
-        fvmgo.Infof(c)
+      ins := fvmgo.YellowV(current)
+      fvmgo.Infof("Current active Flutter SDK is %v", ins)
+
+      link := fvmgo.FlutterBin()
+      ins = fvmgo.YellowV(link)
+      fvmgo.Infof("And its link path is %v", ins)
+
+      dst, err := os.Readlink(link)
+      if err != nil {
+        fvmgo.Errorf("Cannot read link target: %v", err)
+      } else {
+        ins = fvmgo.YellowV(dst)
+        fvmgo.Infof("Actually path is %v", ins)
       }
     }
   },
