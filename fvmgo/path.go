@@ -23,6 +23,19 @@ import (
 
 var fvmEnvInited = false
 
+func createMagicFile(magicFile string) {
+  f, err := os.Create(magicFile)
+  if err != nil {
+    Errorf("Can't create magic file %s: %v", magicFile, err)
+    os.Exit(1)
+  }
+  err = f.Close()
+  if err != nil {
+    Errorf("Can't close magic file: %v", err)
+    os.Exit(1)
+  }
+}
+
 /// check if home is a valid fvm home directory
 /// home will be created if not exist,
 func initFvmHome(home string) {
@@ -33,7 +46,17 @@ func initFvmHome(home string) {
       Errorf("Can't create fvm home directory %s: %v", home, err)
       os.Exit(1)
     }
-  } else if IsDirectory(home) && !IsFileExists(magicFile) {
+    createMagicFile(magicFile)
+  }
+  empty, err := IsEmptyDir(home)
+  if err != nil {
+    Errorf("Can't check if home is empty $s: %v", home, err)
+    os.Exit(1)
+  }
+  if empty {
+    createMagicFile(magicFile)
+  }
+  if IsDirectory(home) && !IsFileExists(magicFile) {
     Errorf("Invalid fvm home %s, magic file \".fvmhome\" not exist", home)
     os.Exit(1)
   } else if IsFileExists(home) || IsSymlink(home) {

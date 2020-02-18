@@ -16,6 +16,7 @@ limitations under the License.
 package fvmgo
 
 import (
+  "io/ioutil"
   "os"
 )
 
@@ -35,6 +36,14 @@ func IsDirectory(name string) bool {
     return false
   }
   return info.IsDir()
+}
+
+func IsEmptyDir(name string) (bool, error) {
+  entries, err := ioutil.ReadDir(name)
+  if err != nil {
+    return false, err
+  }
+  return len(entries) == 0, nil
 }
 
 func IsSymlink(name string) bool {
