@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.1](https://github.com/befovy/fvm/compare/v0.3.0...v0.3.1) (2020-02-18)
+
+* fix magicfile test [#1](https://github.com/befovy/fvm/issues/1) ([7bdb743](https://github.com/befovy/fvm/commit/7bdb7434c844f5289760bc8620da8dbd42dd0266))
+
 ### [0.3.0](https://github.com/befovy/fvm/compare/v0.2.4...v0.3.0) (2019-12-20)
 
 * add current sub command ([693e15b](https://github.com/befovy/fvm/commit/693e15b77c3d0c012b85d40280daf29fa67ad6b0))
