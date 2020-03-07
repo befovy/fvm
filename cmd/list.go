@@ -47,5 +47,18 @@ var listCommand = &cobra.Command{
         fvmgo.Infof(c)
       }
     }
+    flutters := fvmgo.FlutterOutOfFvm("")
+    if flutters != nil && len(flutters) > 0 {
+      fvmgo.Errorf("You have installed flutter outside of fvm")
+      for _, f := range flutters {
+        fvmgo.Warnf("-->  %v", f)
+      }
+      ins := fvmgo.YellowV("fvm import")
+      if len(flutters) == 1 {
+        fvmgo.Errorf("To import this into fvm, use %v", ins)
+      } else {
+        fvmgo.Errorf("To import these into fvm, use %v", ins)
+      }
+    }
   },
 }

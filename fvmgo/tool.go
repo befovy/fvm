@@ -352,18 +352,54 @@ func linkFlutter(linkDir, version string) {
   }
 }
 
-func LinkGlobalFlutter(version string) {
-  linkPath := path.Join(FvmHome(), "fvmbin")
-  linkFlutter(linkPath, version)
-
+func envPaths() []string {
   osPath := os.Getenv("PATH")
-
   var paths []string
   if runtime.GOOS == "windows" {
     paths = strings.Split(osPath, ";")
   } else {
     paths = strings.Split(osPath, ":")
   }
+  return paths
+}
+
+func hasFlutterBin(name string) (bool, string) {
+  if IsDirectory(name) && IsDirectory(path.Join(name, "bin")) {
+    name = path.Join(name, "bin", "flutter")
+  } else if IsDirectory(name) {
+    name = path.Join(name, "flutter")
+  }
+  if IsSymlink(name) {
+    dst, err := os.Readlink(name)
+    if err != nil {
+      Errorf("Cannot read link target: %v", err)
+    } else {
+      name = dst
+    }
+  }
+  return IsExecutable(name), name
+}
+
+func FlutterOutOfFvm(install string) []string {
+  paths := envPaths()
+  res := make([]string, 0)
+  if len(install) > 0 {
+    paths = append(paths, install)
+  }
+  for _, p := range paths {
+    has, name := hasFlutterBin(p)
+    if has && !strings.HasPrefix(p, FvmHome()) {
+      res = append(res, name)
+    }
+  }
+  return res
+}
+
+func LinkGlobalFlutter(version string) {
+  linkPath := path.Join(FvmHome(), "fvmbin")
+  linkFlutter(linkPath, version)
+
+  paths := envPaths()
 
   if !stringSliceContains(paths, linkPath) {
     if runtime.GOOS == "darwin" || runtime.GOOS == "linux" {
@@ -372,6 +408,8 @@ func LinkGlobalFlutter(version string) {
     } else {
       Warnf("Add %s to path to make sure you can use flutter from terminal", linkPath)
     }
+  } else {
+    Infof("linkpath: %v", linkPath)
   }
 }
 

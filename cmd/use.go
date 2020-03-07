@@ -24,7 +24,7 @@ import (
 var local bool
 
 func init() {
-  useCommand.Flags().BoolVar(&local, "local", false, "use SDK locally")
+  useCommand.Flags().BoolVarP(&local, "local", "l", false, "use SDK locally")
   rootCmd.AddCommand(useCommand)
 }
 
