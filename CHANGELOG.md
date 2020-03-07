@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.0](https://github.com/befovy/fvm/compare/v0.3.1...v0.4.0) (2020-03-07)
+
+* add import sub command, import flutter outside of fvm into fvm ([2161286](https://github.com/befovy/fvm/commit/21612865b64685165f1c8c33158dd928f4aebb38))
+
 ### [0.3.1](https://github.com/befovy/fvm/compare/v0.3.0...v0.3.1) (2020-02-18)
 
 * fix magicfile test [#1](https://github.com/befovy/fvm/issues/1) ([7bdb743](https://github.com/befovy/fvm/commit/7bdb7434c844f5289760bc8620da8dbd42dd0266))
