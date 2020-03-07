@@ -19,6 +19,13 @@ Also, it allows you to grab versions by a specific release, i.e. 1.2.0. In case 
 To Install fvm:
 
 ```bash
+brew tap befovy/taps
+brew install fvm
+```
+
+Or install fvm through `go get`
+
+```bash
 > go get -u -v github.com/befovy/fvm
 ```
 
