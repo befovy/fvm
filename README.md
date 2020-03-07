@@ -56,6 +56,18 @@ FVM gives you the ability to install many Flutter **releases** or **channels**.
 
 Use `master` to install the Master channel and `v1.8.0` to install the release.
 
+### Import Flutter from previous installation
+
+FVM has subcommand `import` which can import your previous installed flutter into fvm.
+
+```bash
+> fvm import <name>
+```  
+
+If you have installed master channel flutter, just use `fvm import master`.  
+Or if you have installed a special derived flutter, just use any name you want to import this flutter. 
+You can use a name from you company, or any other you want. `fvm import xianyu`
+
 ### Use a SDK Version
 
 You can use the installed Flutter SDK versions for your computer user account globally. To do that just:

@@ -39,6 +39,21 @@ var installCommand = &cobra.Command{
     return nil
   },
   Run: func(cmd *cobra.Command, args []string) {
+
+    flutters := fvmgo.FlutterOutOfFvm("")
+    if flutters != nil && len(flutters) > 0 {
+      fvmgo.Errorf("You have installed flutter outside of fvm")
+      for _, f := range flutters {
+        fvmgo.Warnf("-->  %v", f)
+      }
+      ins := fvmgo.YellowV("fvm import")
+      if len(flutters) == 1 {
+        fvmgo.Errorf("To import this into fvm, use %v", ins)
+      } else {
+        fvmgo.Errorf("To import these into fvm, use %v", ins)
+      }
+    }
+
     err := fvmgo.CheckIfGitExists()
     if err == nil {
       version := args[0]
