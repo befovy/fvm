@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+---
+## [0.5.0](https://github.com/befovy/fvm/compare/v0.4.0...v0.5.0) (2020-04-24)
+
+* link flutter dir to fvmhome/current ([98b9df8](https://github.com/befovy/fvm/commit/98b9df8a6b986a8a871ecb56da3369bc4d53ad0a))
+
 ### [0.4.0](https://github.com/befovy/fvm/compare/v0.3.1...v0.4.0) (2020-03-07)
 
 * add import sub command, import flutter outside of fvm into fvm ([2161286](https://github.com/befovy/fvm/commit/21612865b64685165f1c8c33158dd928f4aebb38))
