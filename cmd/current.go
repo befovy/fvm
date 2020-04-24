@@ -16,49 +16,49 @@ limitations under the License.
 package cmd
 
 import (
-  "errors"
-  "github.com/befovy/fvm/fvmgo"
-  "os"
+	"errors"
+	"github.com/befovy/fvm/fvmgo"
+	"os"
 
-  "github.com/spf13/cobra"
+	"github.com/spf13/cobra"
 )
 
 func init() {
-  rootCmd.AddCommand(currentCmd)
+	rootCmd.AddCommand(currentCmd)
 }
 
 // currentCmd represents the current command
 var currentCmd = &cobra.Command{
-  Use:   "current",
-  Short: "Show current Flutter SDK info",
-  Args: func(cmd *cobra.Command, args []string) error {
-    if len(args) != 0 {
-      return errors.New("dose not take argument")
-    }
-    return nil
-  },
-  Run: func(cmd *cobra.Command, args []string) {
-    current, err := fvmgo.CurrentVersion()
-    if err != nil {
-      fvmgo.Errorf(err.Error())
-    } else if len(current) == 0 {
-      ins := fvmgo.YellowV("fvm use <version>")
-      fvmgo.Warnf("No active Flutter sdk, please run %v", ins)
-    } else {
-      ins := fvmgo.YellowV(current)
-      fvmgo.Infof("Current active Flutter SDK is %v", ins)
+	Use:   "current",
+	Short: "Show current Flutter SDK info",
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return errors.New("dose not take argument")
+		}
+		return nil
+	},
+	Run: func(cmd *cobra.Command, args []string) {
+		current, err := fvmgo.CurrentVersion()
+		if err != nil {
+			fvmgo.Errorf(err.Error())
+		} else if len(current) == 0 {
+			ins := fvmgo.YellowV("fvm use <version>")
+			fvmgo.Warnf("No active Flutter sdk, please run %v", ins)
+		} else {
+			ins := fvmgo.YellowV(current)
+			fvmgo.Infof("Current active Flutter SDK is %v", ins)
 
-      link := fvmgo.FlutterBin()
-      ins = fvmgo.YellowV(link)
-      fvmgo.Infof("And its link path is %v", ins)
+			link := fvmgo.FlutterBin()
+			ins = fvmgo.YellowV(link)
+			fvmgo.Infof("And its link path is %v", ins)
 
-      dst, err := os.Readlink(link)
-      if err != nil {
-        fvmgo.Errorf("Cannot read link target: %v", err)
-      } else {
-        ins = fvmgo.YellowV(dst)
-        fvmgo.Infof("Actually path is %v", ins)
-      }
-    }
-  },
+			dst, err := os.Readlink(link)
+			if err != nil {
+				fvmgo.Errorf("Cannot read link target: %v", err)
+			} else {
+				ins = fvmgo.YellowV(dst)
+				fvmgo.Infof("Actually path is %v", ins)
+			}
+		}
+	},
 }

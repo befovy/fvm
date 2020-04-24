@@ -17,35 +17,35 @@ limitations under the License.
 package fvmgo
 
 import (
-  "runtime"
-  "testing"
+	"runtime"
+	"testing"
 )
 
 func TestFileExist(t *testing.T) {
-  if runtime.GOOS == "darwin" {
-    if !IsFileExists("/bin/bash") {
-      t.Fail()
-    }
-    if IsFileExists("/bin/helloworld") {
-      t.Fail()
-    }
-  }
+	if runtime.GOOS == "darwin" {
+		if !IsFileExists("/bin/bash") {
+			t.Fail()
+		}
+		if IsFileExists("/bin/helloworld") {
+			t.Fail()
+		}
+	}
 }
 
 func TestIsDirectory(t *testing.T) {
-  if runtime.GOOS == "darwin" {
-    if !IsDirectory("/bin") {
-      t.Fail()
-    }
+	if runtime.GOOS == "darwin" {
+		if !IsDirectory("/bin") {
+			t.Fail()
+		}
 
-    if IsDirectory("bin/bash") {
-      t.Fail()
-    }
-  }
+		if IsDirectory("bin/bash") {
+			t.Fail()
+		}
+	}
 }
 
 func TestIsNotFound(t *testing.T) {
-  if !IsNotFound("/usr/local/fvm/versions/.DS_Store/.github") {
-    t.Fail()
-  }
+	if !IsNotFound("/usr/local/fvm/versions/.DS_Store/.github") {
+		t.Fail()
+	}
 }

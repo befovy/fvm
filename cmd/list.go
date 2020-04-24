@@ -16,49 +16,49 @@ limitations under the License.
 package cmd
 
 import (
-  "errors"
-  "fmt"
-  "github.com/befovy/fvm/fvmgo"
-  "github.com/spf13/cobra"
+	"errors"
+	"fmt"
+	"github.com/befovy/fvm/fvmgo"
+	"github.com/spf13/cobra"
 )
 
 func init() {
-  rootCmd.AddCommand(listCommand)
+	rootCmd.AddCommand(listCommand)
 }
 
 var listCommand = &cobra.Command{
-  Use:   "list",
-  Short: "Lists installed Flutter SDK Version",
-  Args: func(cmd *cobra.Command, args []string) error {
-    if len(args) != 0 {
-      return errors.New("dose not take argument")
-    }
-    return nil
-  },
-  Run: func(cmd *cobra.Command, args []string) {
-    choices := fvmgo.FlutterListInstalledSdks()
-    if len(choices) == 0 {
-      fvmgo.Warnf("No Flutter SDKs have been installed yet.")
-    } else {
-      for _, c := range choices {
-        if fvmgo.IsCurrentVersion(c) {
-          c = fmt.Sprintf("%s (current)", c)
-        }
-        fvmgo.Infof(c)
-      }
-    }
-    flutters := fvmgo.FlutterOutOfFvm("")
-    if flutters != nil && len(flutters) > 0 {
-      fvmgo.Errorf("You have installed flutter outside of fvm")
-      for _, f := range flutters {
-        fvmgo.Warnf("-->  %v", f)
-      }
-      ins := fvmgo.YellowV("fvm import")
-      if len(flutters) == 1 {
-        fvmgo.Errorf("To import this into fvm, use %v", ins)
-      } else {
-        fvmgo.Errorf("To import these into fvm, use %v", ins)
-      }
-    }
-  },
+	Use:   "list",
+	Short: "Lists installed Flutter SDK Version",
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return errors.New("dose not take argument")
+		}
+		return nil
+	},
+	Run: func(cmd *cobra.Command, args []string) {
+		choices := fvmgo.FlutterListInstalledSdks()
+		if len(choices) == 0 {
+			fvmgo.Warnf("No Flutter SDKs have been installed yet.")
+		} else {
+			for _, c := range choices {
+				if fvmgo.IsCurrentVersion(c) {
+					c = fmt.Sprintf("%s (current)", c)
+				}
+				fvmgo.Infof(c)
+			}
+		}
+		flutters := fvmgo.FlutterOutOfFvm("")
+		if flutters != nil && len(flutters) > 0 {
+			fvmgo.Errorf("You have installed flutter outside of fvm")
+			for _, f := range flutters {
+				fvmgo.Warnf("-->  %v", f)
+			}
+			ins := fvmgo.YellowV("fvm import")
+			if len(flutters) == 1 {
+				fvmgo.Errorf("To import this into fvm, use %v", ins)
+			} else {
+				fvmgo.Errorf("To import these into fvm, use %v", ins)
+			}
+		}
+	},
 }
