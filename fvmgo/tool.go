@@ -98,7 +98,7 @@ func FlutterBin() string {
 	if len(projectBin) > 0 {
 		return projectBin
 	} else {
-		return path.Join(FvmHome(), "fvmbin", "flutter")
+		return path.Join(FvmHome(), "current")
 	}
 }
 
@@ -308,7 +308,7 @@ func projectFlutterLink(dir string, depth int) string {
 	if len(dir) == 0 {
 		dir = WorkingDir()
 	}
-	link = path.Join(dir, ".fvmbin", "flutter")
+	link = path.Join(dir, ".fvmbin", "current")
 
 	if IsSymlink(link) {
 		return link
@@ -320,7 +320,7 @@ func projectFlutterLink(dir string, depth int) string {
 	return projectFlutterLink(path.Dir(dir), depth)
 }
 
-func linkFlutter(linkDir, version string) {
+func linkFlutterBin(linkDir, version string) {
 	if !IsDirectory(linkDir) && !IsNotFound(linkDir) {
 		Errorf("The path fvm used to make link exists but is not a directory")
 		os.Exit(1)
@@ -348,6 +348,24 @@ func linkFlutter(linkDir, version string) {
 	err := os.Symlink(versionBin, destLink)
 	if err != nil {
 		Errorf("Cannot link flutter to global: %v", err)
+		os.Exit(1)
+	}
+}
+
+func linkFlutterDir(linkDir, version string) {
+	versionDir := path.Join(VersionsDir(), version)
+
+	if !IsNotFound(linkDir) {
+		err := os.RemoveAll(linkDir)
+		if err != nil {
+			Errorf("Cannot remove link file: %v", err)
+			os.Exit(1)
+		}
+	}
+
+	err := os.Symlink(versionDir, linkDir)
+	if err != nil {
+		Errorf("Cannot link flutter to dest %s: %v", versionDir, err)
 		os.Exit(1)
 	}
 }
@@ -397,16 +415,18 @@ func FlutterOutOfFvm(install string) []string {
 
 func LinkGlobalFlutter(version string) {
 	linkPath := path.Join(FvmHome(), "fvmbin")
-	linkFlutter(linkPath, version)
+	linkFlutterBin(linkPath, version)
 
+	currentPath := path.Join(FvmHome(), "current")
+	linkFlutterDir(currentPath, version)
 	paths := envPaths()
 
-	if !stringSliceContains(paths, linkPath) {
+	if !stringSliceContains(paths, currentPath) {
 		if runtime.GOOS == "darwin" || runtime.GOOS == "linux" {
-			cmd := YellowV("    export PATH=\"%s:$PATH\"", linkPath)
-			Infof("Add %s to path to make sure you can use flutter from terminal\n%v", linkPath, cmd)
+			cmd := YellowV("    export PATH=\"%s:$PATH\"", currentPath)
+			Infof("Add %s to path to make sure you can use flutter from terminal\n%v", currentPath, cmd)
 		} else {
-			Warnf("Add %s to path to make sure you can use flutter from terminal", linkPath)
+			Warnf("Add %s to path to make sure you can use flutter from terminal", currentPath)
 		}
 	} else {
 		Infof("linkpath: %v", linkPath)
@@ -415,5 +435,8 @@ func LinkGlobalFlutter(version string) {
 
 func LinkProjectFlutter(version string) {
 	linkPath := path.Join(WorkingDir(), ".fvmbin")
-	linkFlutter(linkPath, version)
+	linkFlutterBin(linkPath, version)
+
+	currentPath := path.Join(WorkingDir(), ".fvmbin", "current")
+	linkFlutterDir(currentPath, version)
 }
