@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
 ---
+
+## [0.6.0](https://github.com/befovy/fvm/compare/v0.5.0...v0.6.0) (2020-04-25)
+
+* remove fvmbin and .fvmbin ([721b511](https://github.com/befovy/fvm/commit/721b511e071e38033e22a0193d3cef15d8e88259))
+
 ## [0.5.0](https://github.com/befovy/fvm/compare/v0.4.0...v0.5.0) (2020-04-24)
 
 * link flutter dir to fvmhome/current ([98b9df8](https://github.com/befovy/fvm/commit/98b9df8a6b986a8a871ecb56da3369bc4d53ad0a))
