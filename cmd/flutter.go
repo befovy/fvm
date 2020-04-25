@@ -19,6 +19,7 @@ import (
 	"github.com/befovy/fvm/fvmgo"
 	"github.com/spf13/cobra"
 	"os"
+	"path"
 )
 
 func init() {
@@ -30,7 +31,7 @@ var flutterCommand = &cobra.Command{
 	Short:              "Proxies Flutter Commands",
 	DisableFlagParsing: true,
 	Run: func(cmd *cobra.Command, args []string) {
-		link := fvmgo.FlutterBin()
+		link := fvmgo.FlutterDir()
 		if len(link) == 0 || !fvmgo.IsSymlink(link) {
 			fvmgo.Errorf("No enabled Flutter sdk found. Create with <use> command")
 		} else {
@@ -39,6 +40,7 @@ var flutterCommand = &cobra.Command{
 				fvmgo.Errorf("Cannot read link target: %v", err)
 				os.Exit(1)
 			}
+			dst = path.Join(dst, "bin", "flutter")
 			err = fvmgo.ProcessRunner(dst, fvmgo.WorkingDir(), args...)
 			if err != nil {
 				fvmgo.Errorf("Error while run flutter: %v", err)

@@ -48,7 +48,7 @@ var currentCmd = &cobra.Command{
 			ins := fvmgo.YellowV(current)
 			fvmgo.Infof("Current active Flutter SDK is %v", ins)
 
-			link := fvmgo.FlutterBin()
+			link := fvmgo.FlutterDir()
 			ins = fvmgo.YellowV(link)
 			fvmgo.Infof("And its link path is %v", ins)
 

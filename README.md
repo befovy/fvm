@@ -132,12 +132,12 @@ If FVM config is still not found, this will run `flutter run` command using the 
 
 #### Call Local SDK Directly
 
-FVM creates a symbolic link within your project called **.fvmbin/flutter** which links to the installed version of the SDK.
+FVM creates a symbolic link within your project called **.fvm/current** which links to the installed version of the SDK.
 
 
-Add `$(pwd)/fvmbin` to your PATH, or
+Add `$(pwd)/.fvm/current/bin` to your PATH, or
 ```bash
-> ./fvmbin/flutter run
+> .fvm/current/bin/flutter run
 ```
 
 This will run `flutter run` command using the local project SDK.

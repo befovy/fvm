@@ -17,6 +17,8 @@ limitations under the License.
 package fvmgo
 
 import (
+	"os"
+	"path"
 	"runtime"
 	"testing"
 )
@@ -26,7 +28,7 @@ func TestFileExist(t *testing.T) {
 		if !IsFileExists("/bin/bash") {
 			t.Fail()
 		}
-		if IsFileExists("/bin/helloworld") {
+		if IsFileExists("/bin/hello-world") {
 			t.Fail()
 		}
 	}
@@ -38,10 +40,34 @@ func TestIsDirectory(t *testing.T) {
 			t.Fail()
 		}
 
-		if IsDirectory("bin/bash") {
+		if IsDirectory("/bin/bash") {
 			t.Fail()
 		}
 	}
+}
+
+func TestIsEmptyDir(t *testing.T) {
+	err := os.Mkdir("TestIsEmptyDir", 0644)
+	var empty bool
+	var f *os.File
+	if err != nil {
+		empty, err = IsEmptyDir("TestIsEmptyDir")
+		if !empty {
+			t.Fail()
+		}
+
+		f, err = os.Create(path.Join("TestIsEmptyDir", "keep"))
+		if err != nil {
+			t.Fail()
+		} else {
+			_ = f.Close()
+		}
+		empty, err = IsEmptyDir("TestIsEmptyDir")
+		if empty {
+			t.Fail()
+		}
+	}
+	_ = os.RemoveAll("TestIsEmptyDir")
 }
 
 func TestIsNotFound(t *testing.T) {

@@ -93,7 +93,7 @@ func IsValidFlutterInstall(version string) bool {
 	return stringSliceContains(versions, version)
 }
 
-func FlutterBin() string {
+func FlutterDir() string {
 	projectBin := projectFlutterLink("", 50)
 	if len(projectBin) > 0 {
 		return projectBin
@@ -103,7 +103,7 @@ func FlutterBin() string {
 }
 
 func CurrentVersion() (string, error) {
-	link := FlutterBin()
+	link := FlutterDir()
 	if IsNotFound(link) {
 		return "", nil
 	}
@@ -111,7 +111,7 @@ func CurrentVersion() (string, error) {
 	if err != nil {
 		return "", errors.New(fmt.Sprintf("Cannot read link target: %v", err))
 	}
-	return path.Base(path.Dir(path.Dir(dst))), nil
+	return path.Base(dst), nil
 }
 
 func IsCurrentVersion(version string) bool {
@@ -308,7 +308,7 @@ func projectFlutterLink(dir string, depth int) string {
 	if len(dir) == 0 {
 		dir = WorkingDir()
 	}
-	link = path.Join(dir, ".fvmbin", "current")
+	link = path.Join(dir, ".fvm", "current")
 
 	if IsSymlink(link) {
 		return link
@@ -318,38 +318,6 @@ func projectFlutterLink(dir string, depth int) string {
 
 	depth -= 1
 	return projectFlutterLink(path.Dir(dir), depth)
-}
-
-func linkFlutterBin(linkDir, version string) {
-	if !IsDirectory(linkDir) && !IsNotFound(linkDir) {
-		Errorf("The path fvm used to make link exists but is not a directory")
-		os.Exit(1)
-	}
-
-	if IsNotFound(linkDir) {
-		err := os.MkdirAll(linkDir, 0755)
-		if err != nil {
-			Errorf("Can't make directory %s: %v", linkDir, err)
-			os.Exit(1)
-		}
-	}
-
-	versionBin := path.Join(VersionsDir(), version, "bin", "flutter")
-	destLink := path.Join(linkDir, "flutter")
-
-	if !IsNotFound(destLink) {
-		err := os.RemoveAll(destLink)
-		if err != nil {
-			Errorf("Cannot remove link file: %v", err)
-			os.Exit(1)
-		}
-	}
-
-	err := os.Symlink(versionBin, destLink)
-	if err != nil {
-		Errorf("Cannot link flutter to global: %v", err)
-		os.Exit(1)
-	}
 }
 
 func linkFlutterDir(linkDir, version string) {
@@ -414,13 +382,19 @@ func FlutterOutOfFvm(install string) []string {
 }
 
 func LinkGlobalFlutter(version string) {
-	linkPath := path.Join(FvmHome(), "fvmbin")
-	linkFlutterBin(linkPath, version)
+	oldPath := path.Join(FvmHome(), "fvmbin")
+	if IsDirectory(oldPath) {
+		err := os.RemoveAll(oldPath)
+		if err != nil {
+			Errorf("Can't remove old link path %s:%v", oldPath, err)
+		}
+	}
 
 	currentPath := path.Join(FvmHome(), "current")
 	linkFlutterDir(currentPath, version)
 	paths := envPaths()
 
+	currentPath = path.Join(currentPath, "bin")
 	if !stringSliceContains(paths, currentPath) {
 		if runtime.GOOS == "darwin" || runtime.GOOS == "linux" {
 			cmd := YellowV("    export PATH=\"%s:$PATH\"", currentPath)
@@ -429,14 +403,19 @@ func LinkGlobalFlutter(version string) {
 			Warnf("Add %s to path to make sure you can use flutter from terminal", currentPath)
 		}
 	} else {
-		Infof("linkpath: %v", linkPath)
+		Infof("linkpath: %v", path.Dir(currentPath))
 	}
 }
 
 func LinkProjectFlutter(version string) {
-	linkPath := path.Join(WorkingDir(), ".fvmbin")
-	linkFlutterBin(linkPath, version)
-
-	currentPath := path.Join(WorkingDir(), ".fvmbin", "current")
+	linkPath := path.Join(WorkingDir(), ".fvm")
+	if IsNotFound(linkPath) {
+		err := os.Mkdir(linkPath, 0755)
+		if err != nil {
+			Errorf("Can't make directory %s:%v", linkPath, err)
+			os.Exit(-1)
+		}
+	}
+	currentPath := path.Join(WorkingDir(), ".fvm", "current")
 	linkFlutterDir(currentPath, version)
 }
