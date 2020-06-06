@@ -18,7 +18,7 @@ package fvmgo
 
 import (
 	"os"
-	"path"
+	"path/filepath"
 	"runtime"
 	"testing"
 )
@@ -56,7 +56,7 @@ func TestIsEmptyDir(t *testing.T) {
 			t.Fail()
 		}
 
-		f, err = os.Create(path.Join("TestIsEmptyDir", "keep"))
+		f, err = os.Create(filepath.Join("TestIsEmptyDir", "keep"))
 		if err != nil {
 			t.Fail()
 		} else {

@@ -24,7 +24,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
-	"path"
+	"path/filepath"
 	"runtime"
 	"strings"
 )
@@ -98,7 +98,7 @@ func FlutterDir() string {
 	if len(projectBin) > 0 {
 		return projectBin
 	} else {
-		return path.Join(FvmHome(), "current")
+		return filepath.Join(FvmHome(), "current")
 	}
 }
 
@@ -111,7 +111,7 @@ func CurrentVersion() (string, error) {
 	if err != nil {
 		return "", errors.New(fmt.Sprintf("Cannot read link target: %v", err))
 	}
-	return path.Base(dst), nil
+	return filepath.Base(dst), nil
 }
 
 func IsCurrentVersion(version string) bool {
@@ -120,7 +120,7 @@ func IsCurrentVersion(version string) bool {
 }
 
 func FlutterSdkRemove(version string) {
-	versionDir := path.Join(VersionsDir(), version)
+	versionDir := filepath.Join(VersionsDir(), version)
 	if !IsNotFound(versionDir) {
 		err := os.RemoveAll(versionDir)
 		if err != nil {
@@ -131,9 +131,9 @@ func FlutterSdkRemove(version string) {
 }
 
 func checkInstalledCorrectly(version string) bool {
-	versionDir := path.Join(VersionsDir(), version)
-	gitDir := path.Join(versionDir, ".github")
-	binDir := path.Join(versionDir, "bin")
+	versionDir := filepath.Join(VersionsDir(), version)
+	gitDir := filepath.Join(versionDir, ".github")
+	binDir := filepath.Join(versionDir, "bin")
 
 	if IsNotFound(versionDir) {
 		return false
@@ -156,7 +156,7 @@ func FlutterChannelClone(channel string) error {
 		Warnf("Flutter channel %s is already installed", channel)
 		return nil
 	}
-	channelDir := path.Join(VersionsDir(), channel)
+	channelDir := filepath.Join(VersionsDir(), channel)
 	Verbosef("Installing Flutter sdk %s to cache directory %s", channel, channelDir)
 	err := os.MkdirAll(channelDir, 0755)
 	if err != nil {
@@ -180,7 +180,7 @@ func FlutterVersionClone(version string) error {
 		return nil
 	}
 
-	versionDir := path.Join(VersionsDir(), version)
+	versionDir := filepath.Join(VersionsDir(), version)
 	Verbosef("Installing Flutter sdk %s to cache directory %s", version, versionDir)
 
 	err := os.MkdirAll(versionDir, 0755)
@@ -221,7 +221,7 @@ func gitGetVersion(p string) string {
 }
 
 func flutterSdkVersion(branch string) string {
-	branchDir := path.Join(VersionsDir(), branch)
+	branchDir := filepath.Join(VersionsDir(), branch)
 	if IsNotFound(branchDir) {
 		Errorf("Could not get version from SDK that is not installed")
 		os.Exit(1)
@@ -308,20 +308,20 @@ func projectFlutterLink(dir string, depth int) string {
 	if len(dir) == 0 {
 		dir = WorkingDir()
 	}
-	link = path.Join(dir, ".fvm", "current")
+	link = filepath.Join(dir, ".fvm", "current")
 
 	if IsSymlink(link) {
 		return link
-	} else if path.Dir(link) == link {
+	} else if filepath.Dir(link) == link {
 		return ""
 	}
 
 	depth -= 1
-	return projectFlutterLink(path.Dir(dir), depth)
+	return projectFlutterLink(filepath.Dir(dir), depth)
 }
 
 func linkFlutterDir(linkDir, version string) {
-	versionDir := path.Join(VersionsDir(), version)
+	versionDir := filepath.Join(VersionsDir(), version)
 
 	if !IsNotFound(linkDir) {
 		err := os.RemoveAll(linkDir)
@@ -350,10 +350,10 @@ func envPaths() []string {
 }
 
 func hasFlutterBin(name string) (bool, string) {
-	if IsDirectory(name) && IsDirectory(path.Join(name, "bin")) {
-		name = path.Join(name, "bin", "flutter")
+	if IsDirectory(name) && IsDirectory(filepath.Join(name, "bin")) {
+		name = filepath.Join(name, "bin", "flutter")
 	} else if IsDirectory(name) {
-		name = path.Join(name, "flutter")
+		name = filepath.Join(name, "flutter")
 	}
 	if IsSymlink(name) {
 		dst, err := os.Readlink(name)
@@ -382,7 +382,7 @@ func FlutterOutOfFvm(install string) []string {
 }
 
 func LinkGlobalFlutter(version string) {
-	oldPath := path.Join(FvmHome(), "fvmbin")
+	oldPath := filepath.Join(FvmHome(), "fvmbin")
 	if IsDirectory(oldPath) {
 		err := os.RemoveAll(oldPath)
 		if err != nil {
@@ -390,11 +390,11 @@ func LinkGlobalFlutter(version string) {
 		}
 	}
 
-	currentPath := path.Join(FvmHome(), "current")
+	currentPath := filepath.Join(FvmHome(), "current")
 	linkFlutterDir(currentPath, version)
 	paths := envPaths()
 
-	currentPath = path.Join(currentPath, "bin")
+	currentPath = filepath.Join(currentPath, "bin")
 	if !stringSliceContains(paths, currentPath) {
 		if runtime.GOOS == "darwin" || runtime.GOOS == "linux" {
 			cmd := YellowV("    export PATH=\"%s:$PATH\"", currentPath)
@@ -403,12 +403,12 @@ func LinkGlobalFlutter(version string) {
 			Warnf("Add %s to path to make sure you can use flutter from terminal", currentPath)
 		}
 	} else {
-		Infof("linkpath: %v", path.Dir(currentPath))
+		Infof("linkpath: %v", filepath.Dir(currentPath))
 	}
 }
 
 func LinkProjectFlutter(version string) {
-	linkPath := path.Join(WorkingDir(), ".fvm")
+	linkPath := filepath.Join(WorkingDir(), ".fvm")
 	if IsNotFound(linkPath) {
 		err := os.Mkdir(linkPath, 0755)
 		if err != nil {
@@ -416,6 +416,6 @@ func LinkProjectFlutter(version string) {
 			os.Exit(-1)
 		}
 	}
-	currentPath := path.Join(WorkingDir(), ".fvm", "current")
+	currentPath := filepath.Join(WorkingDir(), ".fvm", "current")
 	linkFlutterDir(currentPath, version)
 }
