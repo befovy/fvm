@@ -19,7 +19,7 @@ import (
 	"github.com/befovy/fvm/fvmgo"
 	"github.com/spf13/cobra"
 	"os"
-	"path"
+	"path/filepath"
 )
 
 func init() {
@@ -40,7 +40,7 @@ var flutterCommand = &cobra.Command{
 				fvmgo.Errorf("Cannot read link target: %v", err)
 				os.Exit(1)
 			}
-			dst = path.Join(dst, "bin", "flutter")
+			dst = filepath.Join(dst, "bin", "flutter")
 			err = fvmgo.ProcessRunner(dst, fvmgo.WorkingDir(), args...)
 			if err != nil {
 				fvmgo.Errorf("Error while run flutter: %v", err)

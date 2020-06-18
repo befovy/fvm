@@ -18,7 +18,7 @@ package fvmgo
 import (
 	"github.com/spf13/viper"
 	"os"
-	"path"
+	"path/filepath"
 )
 
 var fvmEnvInited = false
@@ -39,7 +39,7 @@ func createMagicFile(magicFile string) {
 /// check if home is a valid fvm home directory
 /// home will be created if not exist,
 func initFvmHome(home string) {
-	magicFile := path.Join(home, ".fvmhome")
+	magicFile := filepath.Join(home, ".fvmhome")
 	if IsNotFound(home) {
 		err := os.MkdirAll(home, 0755)
 		if err != nil {
@@ -98,10 +98,10 @@ func initFvmEnv() {
 			Errorf("Cant't get user config dir: %v", err)
 			os.Exit(1)
 		}
-		home = path.Join(cfgDir, "fvm")
+		home = filepath.Join(cfgDir, "fvm")
 	}
 	initFvmHome(home)
-	cfgFile := path.Join(home, "config.yaml")
+	cfgFile := filepath.Join(home, "config.yaml")
 	confirmConfigFile(cfgFile)
 	viper.SetConfigFile(cfgFile)
 	err := viper.ReadInConfig()
@@ -156,7 +156,7 @@ func FvmHome() string {
 /// if not exits, dir will be created
 /// else this call exit(1)
 func VersionsDir() string {
-	dir := path.Join(FvmHome(), "versions")
+	dir := filepath.Join(FvmHome(), "versions")
 	createDir(dir, "versions")
 	return dir
 }
@@ -165,7 +165,7 @@ func VersionsDir() string {
 /// if not exits, dir will be created
 /// else this call exit(1)
 func TempDir() string {
-	dir := path.Join(FvmHome(), "temp")
+	dir := filepath.Join(FvmHome(), "temp")
 	createDir(dir, "temp")
 	return dir
 }
