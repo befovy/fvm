@@ -16,10 +16,11 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/befovy/fvm/fvmgo"
-	"github.com/spf13/cobra"
 	"os"
 	"path/filepath"
+
+	"github.com/befovy/fvm/fvmgo"
+	"github.com/spf13/cobra"
 )
 
 func init() {

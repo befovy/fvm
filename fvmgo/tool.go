@@ -19,7 +19,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/spf13/viper"
 	"io"
 	"io/ioutil"
 	"os"
@@ -27,10 +26,13 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+
+	"github.com/spf13/viper"
 )
 
-const FlutterRepo = "https://github.com/flutter/flutter.git"
+const flutterRepo = "https://github.com/flutter/flutter.git"
 
+// FlutterChannels returns All valid flutter channels as string array
 func FlutterChannels() []string {
 	return []string{
 		"master", "stable", "dev", "beta",
@@ -70,13 +72,13 @@ func ProcessRunner(cmd string, dir string, arg ...string) error {
 	return nil
 }
 
-/// Returns true if it's a valid Flutter channel
+// IsValidFlutterChannel return true if it's a valid Flutter channel
 func IsValidFlutterChannel(channel string) bool {
 	channels := FlutterChannels()
 	return stringSliceContains(channels, channel)
 }
 
-/// Returns true if it's a valid Flutter channel
+// IsValidFlutterVersion return true if it's a valid Flutter version\tag
 func IsValidFlutterVersion(version string) bool {
 	initFvmEnv()
 	versions := viper.GetStringSlice("FLUTTER_REMOTE_TAGS")
@@ -162,7 +164,7 @@ func FlutterChannelClone(channel string) error {
 	if err != nil {
 		return errors.New(fmt.Sprintf("Cannot create directory for channel %s: %v", channel, err))
 	}
-	err = ProcessRunner("git", channelDir, "clone", "-b", channel, FlutterRepo, ".")
+	err = ProcessRunner("git", channelDir, "clone", "-b", channel, flutterRepo, ".")
 	if err != nil {
 		return err
 	}
@@ -187,7 +189,7 @@ func FlutterVersionClone(version string) error {
 	if err != nil {
 		return errors.New(fmt.Sprintf("Cannot creat directory for version %s: %v", version, err))
 	}
-	err = ProcessRunner("git", versionDir, "clone", "-b", version, FlutterRepo, ".")
+	err = ProcessRunner("git", versionDir, "clone", "-b", version, flutterRepo, ".")
 	if err != nil {
 		return err
 	}
@@ -241,7 +243,7 @@ func CheckIfGitExists() error {
 }
 
 func FlutterListAllSdks() []string {
-	runner := exec.Command("git", "ls-remote", "--tags", FlutterRepo)
+	runner := exec.Command("git", "ls-remote", "--tags", flutterRepo)
 	var b bytes.Buffer
 	runner.Stdout = &b
 

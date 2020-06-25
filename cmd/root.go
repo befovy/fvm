@@ -17,10 +17,11 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/befovy/fvm/fvmgo"
-	"github.com/spf13/cobra"
 	"os"
 	"os/signal"
+
+	"github.com/befovy/fvm/fvmgo"
+	"github.com/spf13/cobra"
 )
 
 var gVerbose bool

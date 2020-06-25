@@ -17,13 +17,28 @@ package cmd
 
 import (
 	"errors"
+	"strconv"
+	"strings"
+
 	"github.com/befovy/fvm/fvmgo"
 	"github.com/spf13/cobra"
-	"strings"
 )
 
 func init() {
 	rootCmd.AddCommand(installCommand)
+}
+
+func maybeVersion(ver string) bool {
+	ver = strings.TrimLeft(ver, "vv")
+	splits := strings.Split(ver, ".")
+	hasNum := false
+	for _, s := range splits {
+		_, err := strconv.ParseInt(s, 10, 64)
+		if err == nil {
+			hasNum = true
+		}
+	}
+	return hasNum
 }
 
 var installCommand = &cobra.Command{
@@ -59,7 +74,7 @@ var installCommand = &cobra.Command{
 			version := args[0]
 			if fvmgo.IsValidFlutterChannel(version) {
 				err = fvmgo.FlutterChannelClone(version)
-			} else if !strings.HasPrefix(version, "v") {
+			} else if !maybeVersion(version) {
 				fvmgo.Errorf("It seems that you want install a Flutter channel but have a invalid channel")
 				channels := fvmgo.YellowV(strings.Join(fvmgo.FlutterChannels(), " "))
 				fvmgo.Errorf("Please use one of %v", channels)
