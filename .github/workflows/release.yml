@@ -1,0 +1,105 @@
+name: Release
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+
+  build:
+    name: Build and Upload Release
+    runs-on: macos-latest
+    steps:
+
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.13
+      id: go
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v1
+
+    - name: Get dependencies
+      run: |
+        go get -v -t -d ./...
+        if [ -f Gopkg.toml ]; then
+            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+            dep ensure
+        fi
+
+    - name: Test
+      run: go test -v github.com/befovy/fvm/...
+
+    - name: Build for Linux
+      run: |
+        env GOOS=linux GOARCH=amd64 go build -v .
+        zip -j fvm-linux-amd64.zip fvm
+
+    - name: Build for Mac OS
+      run: |
+        env GOOS=darwin GOARCH=amd64 go build -v .
+        zip -j fvm-macos-amd64.zip fvm
+
+    - name: Build for Windows
+      run: |
+        env GOOS=windows GOARCH=amd64 go build -v .
+        zip -j fvm-windows-amd64.zip fvm.exe
+        env GOOS=windows GOARCH=386 go build -v .
+        zip -j fvm-windows-386.zip fvm.exe
+
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Linux Release Asset
+      id: upload-linux-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./fvm-linux-amd64.zip
+        asset_name: fvm-linux-amd64.zip
+        asset_content_type: application/zip
+
+    - name: Upload Mac OS Release Asset
+      id: upload-macos-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./fvm-macos-amd64.zip
+        asset_name: fvm-macos-amd64.zip
+        asset_content_type: application/zip
+
+    - name: Upload Windows amd64 Release Asset
+      id: upload-windows-amd64-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./fvm-windows-amd64.zip
+        asset_name: fvm-windows-amd64.zip
+        asset_content_type: application/zip
+
+    - name: Upload Windows x86 Release Asset
+      id: upload-windows-386-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./fvm-windows-386.zip
+        asset_name: fvm-windows-386.zip
+        asset_content_type: application/zip
