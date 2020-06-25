@@ -3,6 +3,9 @@
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
 ---
+## [0.6.1](https://github.com/befovy/fvm/compare/v0.6.0...v0.6.1) (2020-06-25)
+
+* fix: version name with no v prefix, fixes ([dfaf0ea](https://github.com/befovy/fvm/commit/dfaf0eab36798fa9940f2846c3e664bcb6f2e86f))
 
 ## [0.6.0](https://github.com/befovy/fvm/compare/v0.5.0...v0.6.0) (2020-04-25)
 
