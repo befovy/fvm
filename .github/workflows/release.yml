@@ -7,7 +7,7 @@ on:
 jobs:
 
   build:
-    name: Build
+    name: Build and Upload Release
     runs-on: macos-latest
     steps:
 
@@ -61,23 +61,45 @@ jobs:
         prerelease: false
 
     - name: Upload Linux Release Asset
-      id: upload-linux-release-asset 
+      id: upload-linux-release-asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./fvm-linux-amd64.zip
         asset_name: fvm-linux-amd64.zip
         asset_content_type: application/zip
 
     - name: Upload Mac OS Release Asset
-      id: upload-macos-release-asset 
+      id: upload-macos-release-asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./fvm-macos-amd64.zip
         asset_name: fvm-macos-amd64.zip
+        asset_content_type: application/zip
+
+    - name: Upload Windows amd64 Release Asset
+      id: upload-windows-amd64-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./fvm-windows-amd64.zip
+        asset_name: fvm-windows-amd64.zip
+        asset_content_type: application/zip
+
+    - name: Upload Windows x86 Release Asset
+      id: upload-windows-386-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./fvm-windows-386.zip
+        asset_name: fvm-windows-386.zip
         asset_content_type: application/zip
