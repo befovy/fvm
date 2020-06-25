@@ -16,9 +16,10 @@ limitations under the License.
 package fvmgo
 
 import (
-	"github.com/spf13/viper"
 	"os"
 	"path/filepath"
+
+	"github.com/spf13/viper"
 )
 
 var fvmEnvInited = false

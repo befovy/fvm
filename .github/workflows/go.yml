@@ -24,9 +24,14 @@ jobs:
             dep ensure
         fi
 
-    - name: Build
+    - name: Build for Linux
       run: go build -v .
 
+    - name: Build for Mac OS
+      run: env GOOS=darwin GOARCH=amd64 go build -v .
+
+    - name: Build for Windows
+      run: env GOOS=windows GOARCH=amd64 go build -v .
 
     - name: Test
       run: go test -v github.com/befovy/fvm/...
