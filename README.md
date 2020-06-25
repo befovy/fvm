@@ -56,6 +56,11 @@ FVM gives you the ability to install many Flutter **releases** or **channels**.
 
 Use `master` to install the Master channel and `v1.8.0` to install the release.
 
+Use `--repo` to install flutter from unoffical repo
+```bash
+> fvm install master --repo https://github.com/flutter/flutter.git
+```
+
 ### Import Flutter from previous installation
 
 FVM has subcommand `import` which can import your previous installed flutter into fvm.

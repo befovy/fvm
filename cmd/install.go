@@ -24,7 +24,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var repo string
+
 func init() {
+	installCommand.Flags().StringVar(&repo, "repo", "", "install flutter from unoffical git repo")
 	rootCmd.AddCommand(installCommand)
 }
 
@@ -72,7 +75,10 @@ var installCommand = &cobra.Command{
 		err := fvmgo.CheckIfGitExists()
 		if err == nil {
 			version := args[0]
-			if fvmgo.IsValidFlutterChannel(version) {
+			if len(repo) > 0 {
+				fvmgo.Infof("Install flutter <%s> from repo %s", version, repo)
+				err = fvmgo.FlutterRepoClone(version, repo)
+			} else if fvmgo.IsValidFlutterChannel(version) {
 				err = fvmgo.FlutterChannelClone(version)
 			} else if !maybeVersion(version) {
 				fvmgo.Errorf("It seems that you want install a Flutter channel but have a invalid channel")

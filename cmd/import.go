@@ -44,7 +44,7 @@ var importCommand = &cobra.Command{
 		"Or you can use flags --path to special the path of flutter",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return errors.New("need to provide a channel or a version or other name as import name, you can use `master` `beta` or `alibaba` `baidu` etc.")
+			return errors.New("need to provide a channel or a version or other name as import name, you can use `master` `beta` or `alibaba` `baidu` etc")
 		}
 		if len(args) > 1 {
 			return errors.New("allows only one argument, the name to be imported as")

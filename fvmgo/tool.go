@@ -55,7 +55,7 @@ func ProcessRunner(cmd string, dir string, arg ...string) error {
 	if len(dir) == 0 {
 		cwd, err := os.Getwd()
 		if err != nil {
-			return errors.New(fmt.Sprintf("Cannot get work directory: %v", err))
+			return fmt.Errorf("Cannot get work directory: %v", err)
 		}
 		runner.Dir = cwd
 	} else {
@@ -67,7 +67,7 @@ func ProcessRunner(cmd string, dir string, arg ...string) error {
 
 	err := runner.Run()
 	if err != nil {
-		return errors.New(fmt.Sprintf("Command '%s' exited with error: %v", cmd, err))
+		return fmt.Errorf("Command '%s' exited with error: %v", cmd, err)
 	}
 	return nil
 }
@@ -111,7 +111,7 @@ func CurrentVersion() (string, error) {
 	}
 	dst, err := os.Readlink(link)
 	if err != nil {
-		return "", errors.New(fmt.Sprintf("Cannot read link target: %v", err))
+		return "", fmt.Errorf("Cannot read link target: %v", err)
 	}
 	return filepath.Base(dst), nil
 }
@@ -148,9 +148,30 @@ func checkInstalledCorrectly(version string) bool {
 	return true
 }
 
+func FlutterRepoClone(version string, repo string) error {
+	if checkInstalledCorrectly(version) {
+		Warnf("Flutter version %s is already installed", version)
+		return nil
+	}
+
+	versionDir := filepath.Join(VersionsDir(), version)
+	Verbosef("Installing Flutter sdk %s to cache directory %s", version, versionDir)
+
+	err := os.MkdirAll(versionDir, 0755)
+	if err != nil {
+		return fmt.Errorf("Cannot creat directory for version %s: %v", version, err)
+	}
+	err = ProcessRunner("git", versionDir, "clone", "-b", version, repo, versionDir)
+	if err != nil {
+		return err
+	}
+	Infof("Successfully installed flutter %s from %s", version, repo)
+	return nil
+}
+
 func FlutterChannelClone(channel string) error {
 	if !IsValidFlutterChannel(channel) {
-		return errors.New(fmt.Sprintf("%s is not a valid flutter channel", channel))
+		return fmt.Errorf("%s is not a valid flutter channel", channel)
 	}
 
 	Verbosef("%s is a valid flutter channel", channel)
@@ -162,9 +183,9 @@ func FlutterChannelClone(channel string) error {
 	Verbosef("Installing Flutter sdk %s to cache directory %s", channel, channelDir)
 	err := os.MkdirAll(channelDir, 0755)
 	if err != nil {
-		return errors.New(fmt.Sprintf("Cannot create directory for channel %s: %v", channel, err))
+		return fmt.Errorf("Cannot create directory for channel %s: %v", channel, err)
 	}
-	err = ProcessRunner("git", channelDir, "clone", "-b", channel, flutterRepo, ".")
+	err = ProcessRunner("git", channelDir, "clone", "-b", channel, flutterRepo, channelDir)
 	if err != nil {
 		return err
 	}
@@ -174,7 +195,7 @@ func FlutterChannelClone(channel string) error {
 
 func FlutterVersionClone(version string) error {
 	if !IsValidFlutterVersion(version) {
-		return errors.New(fmt.Sprintf("%s is not a valid version", version))
+		return fmt.Errorf("%s is not a valid version", version)
 	}
 	Verbosef("%s is a valid flutter version", version)
 	if checkInstalledCorrectly(version) {
@@ -187,9 +208,9 @@ func FlutterVersionClone(version string) error {
 
 	err := os.MkdirAll(versionDir, 0755)
 	if err != nil {
-		return errors.New(fmt.Sprintf("Cannot creat directory for version %s: %v", version, err))
+		return fmt.Errorf("Cannot creat directory for version %s: %v", version, err)
 	}
-	err = ProcessRunner("git", versionDir, "clone", "-b", version, flutterRepo, ".")
+	err = ProcessRunner("git", versionDir, "clone", "-b", version, flutterRepo, versionDir)
 	if err != nil {
 		return err
 	}
@@ -318,7 +339,7 @@ func projectFlutterLink(dir string, depth int) string {
 		return ""
 	}
 
-	depth -= 1
+	depth--
 	return projectFlutterLink(filepath.Dir(dir), depth)
 }
 
