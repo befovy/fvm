@@ -39,6 +39,7 @@ func FlutterChannels() []string {
 	}
 }
 
+// stringSliceContains return true if slice contains target
 func stringSliceContains(slice []string, target string) bool {
 	contains := false
 	for _, v := range slice {
@@ -70,6 +71,26 @@ func ProcessRunner(cmd string, dir string, arg ...string) error {
 		return fmt.Errorf("Command '%s' exited with error: %v", cmd, err)
 	}
 	return nil
+}
+
+func ProcessRunnerWithOutput(cmd string, dir string, arg ...string) ([]byte, error) {
+	runner := exec.Command(cmd, arg...)
+	if len(dir) == 0 {
+		cwd, err := os.Getwd()
+		if err != nil {
+			return nil, fmt.Errorf("Cannot get work directory: %v", err)
+		}
+		runner.Dir = cwd
+	} else {
+		runner.Dir = dir
+	}
+
+	runner.Stderr = os.Stderr
+	out, err := runner.Output()
+	if err != nil {
+		return nil, fmt.Errorf("Command '%s' exited with error: %v", cmd, err)
+	}
+	return out, nil
 }
 
 // IsValidFlutterChannel return true if it's a valid Flutter channel
@@ -148,20 +169,57 @@ func checkInstalledCorrectly(version string) bool {
 	return true
 }
 
+func sameRepoInstalled(repo string) string {
+	versions := FlutterListInstalledSdks()
+	repoDir := ""
+	for _, version := range versions {
+		versionDir := filepath.Join(VersionsDir(), version)
+		output, err := ProcessRunnerWithOutput("git", versionDir, "remote")
+		if err != nil {
+			continue
+		} else {
+			remotesStr := string(output)
+			remotesStr = strings.TrimSpace(remotesStr)
+			remotes := strings.Split(remotesStr, "\n")
+			for _, remote := range remotes {
+				output, err = ProcessRunnerWithOutput("git", versionDir, "remote", "get-url", remote)
+				remoteURL := string(output)
+				remoteURL = strings.TrimSpace(remoteURL)
+				if remoteURL == repo {
+					repoDir = versionDir
+					break
+				}
+			}
+		}
+		if len(repoDir) > 0 {
+			break
+		}
+	}
+	return repoDir
+}
+
+func cloneFlutter(dir, branch, repo string) error {
+	localRepo := sameRepoInstalled(repo)
+	if len(localRepo) == 0 {
+		return ProcessRunner("git", dir, "clone", "-b", branch, repo, dir)
+	}
+	Infof("local:%v", localRepo)
+
+	Verbosef("Installing Flutter sdk %s to cache directory %s", branch, dir)
+	err := os.MkdirAll(dir, 0755)
+	if err != nil {
+		return fmt.Errorf("Cannot create directory for channel %s: %v", branch, err)
+	}
+	return ProcessRunner("git", dir, "clone", "--reference="+localRepo, "--dissociate", repo, "-b", branch, dir)
+}
+
 func FlutterRepoClone(version string, repo string) error {
 	if checkInstalledCorrectly(version) {
 		Warnf("Flutter version %s is already installed", version)
 		return nil
 	}
-
 	versionDir := filepath.Join(VersionsDir(), version)
-	Verbosef("Installing Flutter sdk %s to cache directory %s", version, versionDir)
-
-	err := os.MkdirAll(versionDir, 0755)
-	if err != nil {
-		return fmt.Errorf("Cannot creat directory for version %s: %v", version, err)
-	}
-	err = ProcessRunner("git", versionDir, "clone", "-b", version, repo, versionDir)
+	err := cloneFlutter(versionDir, version, repo)
 	if err != nil {
 		return err
 	}
@@ -180,12 +238,7 @@ func FlutterChannelClone(channel string) error {
 		return nil
 	}
 	channelDir := filepath.Join(VersionsDir(), channel)
-	Verbosef("Installing Flutter sdk %s to cache directory %s", channel, channelDir)
-	err := os.MkdirAll(channelDir, 0755)
-	if err != nil {
-		return fmt.Errorf("Cannot create directory for channel %s: %v", channel, err)
-	}
-	err = ProcessRunner("git", channelDir, "clone", "-b", channel, flutterRepo, channelDir)
+	err := cloneFlutter(channelDir, channel, flutterRepo)
 	if err != nil {
 		return err
 	}
@@ -202,15 +255,8 @@ func FlutterVersionClone(version string) error {
 		Warnf("Flutter version %s is already installed", version)
 		return nil
 	}
-
 	versionDir := filepath.Join(VersionsDir(), version)
-	Verbosef("Installing Flutter sdk %s to cache directory %s", version, versionDir)
-
-	err := os.MkdirAll(versionDir, 0755)
-	if err != nil {
-		return fmt.Errorf("Cannot creat directory for version %s: %v", version, err)
-	}
-	err = ProcessRunner("git", versionDir, "clone", "-b", version, flutterRepo, versionDir)
+	err := cloneFlutter(versionDir, version, flutterRepo)
 	if err != nil {
 		return err
 	}
