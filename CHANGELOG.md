@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
 ---
+## [0.8.0](https://github.com/befovy/fvm/compare/v0.7.0...v0.8.0) (2020-07-04)
+
+* speed up clone via reference ([ef6a5d1](https://github.com/befovy/fvm/commit/ef6a5d14364744117acb847a1fb4fd7b09945e32))
+
 ## [0.7.0](https://github.com/befovy/fvm/compare/v0.6.1...v0.7.0) (2020-06-25)
 
 * fvm install from repo ([#15](https://github.com/befovy/fvm/issues/15)) ([586d1ca](https://github.com/befovy/fvm/commit/586d1cae174ae4ec1fa86c46fd06072eb96796d5))
