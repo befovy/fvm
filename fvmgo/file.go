@@ -41,6 +41,7 @@ func IsDirectory(name string) bool {
 	return info.IsDir()
 }
 
+// IsEmptyDir check if path exists and is a empty directory
 func IsEmptyDir(name string) (bool, error) {
 	entries, err := ioutil.ReadDir(name)
 	if err != nil {
@@ -49,6 +50,7 @@ func IsEmptyDir(name string) (bool, error) {
 	return len(entries) == 0, nil
 }
 
+// IsSymlink check if path exists and is a symlink
 func IsSymlink(name string) bool {
 	info, err := os.Lstat(name)
 	if os.IsNotExist(err) {
@@ -60,11 +62,13 @@ func IsSymlink(name string) bool {
 	return (info.Mode() & os.ModeSymlink) != 0
 }
 
+// IsNotFound return true if path not exists
 func IsNotFound(name string) bool {
 	_, err := os.Lstat(name)
 	return err != nil
 }
 
+// IsExecutable return true if path exists and executable
 func IsExecutable(name string) bool {
 	info, err := os.Stat(name)
 	if err != nil {
@@ -171,6 +175,5 @@ func CopyDir(src string, dst string) (err error) {
 			}
 		}
 	}
-
 	return
 }
