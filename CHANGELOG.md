@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
 ---
+## [0.8.1](https://github.com/befovy/fvm/compare/v0.8.0...v0.8.1) (2021-05-15)
+
+* fix chdir into no exist dir ([28a9c16](https://github.com/befovy/fvm/commit/28a9c16d4e08a40eea949b61e1e76d4128eda9a5))
+
+---
 ## [0.8.0](https://github.com/befovy/fvm/compare/v0.7.0...v0.8.0) (2020-07-04)
 
 * speed up clone via reference ([ef6a5d1](https://github.com/befovy/fvm/commit/ef6a5d14364744117acb847a1fb4fd7b09945e32))
