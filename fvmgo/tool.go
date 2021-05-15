@@ -56,7 +56,7 @@ func ProcessRunner(cmd string, dir string, arg ...string) error {
 	if len(dir) == 0 {
 		cwd, err := os.Getwd()
 		if err != nil {
-			return fmt.Errorf("Cannot get work directory: %v", err)
+			return fmt.Errorf("cannot get work directory: %v", err)
 		}
 		runner.Dir = cwd
 	} else {
@@ -68,7 +68,7 @@ func ProcessRunner(cmd string, dir string, arg ...string) error {
 
 	err := runner.Run()
 	if err != nil {
-		return fmt.Errorf("Command '%s' exited with error: %v", cmd, err)
+		return fmt.Errorf("command '%s' exited with error: %v", cmd, err)
 	}
 	return nil
 }
@@ -78,7 +78,7 @@ func ProcessRunnerWithOutput(cmd string, dir string, arg ...string) ([]byte, err
 	if len(dir) == 0 {
 		cwd, err := os.Getwd()
 		if err != nil {
-			return nil, fmt.Errorf("Cannot get work directory: %v", err)
+			return nil, fmt.Errorf("cannot get work directory: %v", err)
 		}
 		runner.Dir = cwd
 	} else {
@@ -88,7 +88,7 @@ func ProcessRunnerWithOutput(cmd string, dir string, arg ...string) ([]byte, err
 	runner.Stderr = os.Stderr
 	out, err := runner.Output()
 	if err != nil {
-		return nil, fmt.Errorf("Command '%s' exited with error: %v", cmd, err)
+		return nil, fmt.Errorf("command '%s' exited with error: %v", cmd, err)
 	}
 	return out, nil
 }
@@ -201,14 +201,15 @@ func sameRepoInstalled(repo string) string {
 func cloneFlutter(dir, branch, repo string) error {
 	localRepo := sameRepoInstalled(repo)
 	if len(localRepo) == 0 {
-		return ProcessRunner("git", dir, "clone", "-b", branch, repo, dir)
+		Verbosef("git clone %s into %s", repo, dir)
+		return ProcessRunner("git", "", "clone", "-b", branch, repo, dir)
 	}
 	Infof("local:%v", localRepo)
 
 	Verbosef("Installing Flutter sdk %s to cache directory %s", branch, dir)
 	err := os.MkdirAll(dir, 0755)
 	if err != nil {
-		return fmt.Errorf("Cannot create directory for channel %s: %v", branch, err)
+		return fmt.Errorf("cannot create directory for channel %s: %v", branch, err)
 	}
 	return ProcessRunner("git", dir, "clone", "--reference="+localRepo, "--dissociate", repo, "-b", branch, dir)
 }
@@ -304,7 +305,7 @@ func CheckIfGitExists() error {
 	Verbosef("Running `git --version` to check if git is available")
 	err := runner.Run()
 	if err != nil {
-		return errors.New("You need git installed to run fvm. Go to https://git-scm.com/downloads")
+		return errors.New("you need git installed to run fvm. Go to https://git-scm.com/downloads")
 	}
 	return nil
 }
